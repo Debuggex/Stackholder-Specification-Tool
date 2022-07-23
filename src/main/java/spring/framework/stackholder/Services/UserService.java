@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
 
     private final JavaMailSender mailSender;
 
-    public UserService(UserRepository userRepository,@Lazy PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
+    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
