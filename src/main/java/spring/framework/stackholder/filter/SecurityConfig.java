@@ -51,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         //http.apply(new CustomDSL(userRepository));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/user/signup/**").permitAll();
+        http.authorizeRequests().antMatchers("/user/signup/**").permitAll();
+        http.authorizeRequests().antMatchers("/user/get/**").permitAll();
         http.authorizeRequests().antMatchers("/user/login/**").permitAll();
         http.authorizeRequests().antMatchers("/user/verify/**").permitAll();
         http.authorizeRequests().antMatchers("/user/forgotpassword/**").permitAll();
