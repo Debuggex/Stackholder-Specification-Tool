@@ -77,9 +77,6 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http.addFilter(new CustomAuthenticationFilter(authenticationManager, userRepository));
         }
-        public CustomDSL customDsl() {
-            return new CustomDSL(userRepository);
-        }
     }
 
 }
