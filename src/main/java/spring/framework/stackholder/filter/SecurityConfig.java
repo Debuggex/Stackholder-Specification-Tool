@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //http.apply(new CustomDSL(userRepository));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/user/signup/**").permitAll();
-        http.authorizeRequests().antMatchers("/user/get/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/user/get/**").permitAll();
         http.authorizeRequests().antMatchers("/user/login/**").permitAll();
         http.authorizeRequests().antMatchers("/user/verify/**").permitAll();
         http.authorizeRequests().antMatchers("/user/forgotpassword/**").permitAll();
