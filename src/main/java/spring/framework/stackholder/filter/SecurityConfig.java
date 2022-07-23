@@ -59,6 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/swagger-ui/**").permitAll();
 
 
+        http.requiresChannel()
+                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                .requiresSecure();
+
         //http.authorizeRequests().antMatchers("/dashboard/**").permitAll();
 
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority("ADMIN");
