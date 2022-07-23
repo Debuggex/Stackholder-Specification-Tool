@@ -38,7 +38,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 
 
-    @Autowired
+
     private final AuthenticationManager authenticationManager;
 
     private final UserRepository userRepository;
