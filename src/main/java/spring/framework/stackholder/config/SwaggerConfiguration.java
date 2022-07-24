@@ -31,12 +31,12 @@ public class SwaggerConfiguration {
         Contact contact=new Contact("Sahbaan Alam","sahbaanalam34@gmail.com","sahbaan.alam@avanzasolutions.com");
         return new ApiInfo(
                 "StackHolder Specification Tool",
-                "Open Book API's that allows author to manage their books publicly",
+                "This Project Includes API's for Stackholder Specification Tool",
                 "1.0",
                 "Terms of Service: 404",
                 contact,
-                "inLicense Version 1.0",
-                "inLicense.com",
+                "License Version 0.1",
+                "License.com",
                 new ArrayList<>()
         );
     }
