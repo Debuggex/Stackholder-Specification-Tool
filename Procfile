@@ -1,1 +1,1 @@
-web: java -Dserver.port=1234 -jar target/stackholder-0.0.1-SNAPSHOT.jar
+web: java -Dserver.port=$PORT -cp target/classes/:target/dependency/* spring.framework.stackholder.StackHolderApplication
