@@ -23,8 +23,5 @@ public class StackHolderApplication {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    JavaMailSender javaMailSender(){
-        return new JavaMailSenderImpl();
-    }
+
 }
