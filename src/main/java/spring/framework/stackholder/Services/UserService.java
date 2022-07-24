@@ -6,8 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -44,12 +47,31 @@ public class UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final JavaMailSender mailSender;
+    @Autowired
+    private JavaMailSender mailSender;
 
-    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
+
+//    @Bean
+//    public JavaMailSender mailSender(){
+//        JavaMailSenderImpl mailSender1=new JavaMailSenderImpl();
+//        mailSender1.setHost("smtp.gmail.com");
+//        mailSender1.setPort(587);
+//
+//        mailSender1.setUsername("sahbaanalam34@gmail.com");
+//        mailSender1.setPassword("zepvxeadrwfdhrzh");
+//
+//        Properties props = mailSender1.getJavaMailProperties();
+//        props.put("mail.transport.protocol", "smtp");
+//        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+//
+//        return mailSender1;
+//    }
+
+    public UserService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.mailSender = mailSender;
+
     }
 
     @Transactional
