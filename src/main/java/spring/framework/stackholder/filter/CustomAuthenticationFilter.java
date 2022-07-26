@@ -17,6 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import spring.framework.stackholder.Repositories.UserRepository;
+import spring.framework.stackholder.RequestDTO.LoginDTO;
 import spring.framework.stackholder.ResponseDTO.LogInResponse;
 import spring.framework.stackholder.ResponseDTO.Response;
 import spring.framework.stackholder.StackHolderConstants.Constants;
@@ -53,29 +54,17 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        StringBuffer stringBuffer=new StringBuffer();
-        String line = null;
 
         try {
-            BufferedReader bufferedReader=request.getReader();
-            while ((line=bufferedReader.readLine())!=null){
-                stringBuffer.append(line);
-            }
+            LoginDTO loginDTO=new ObjectMapper().readValue(request.getInputStream(),LoginDTO.class);
+            UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(
+                    loginDTO.getEmail(),loginDTO.getPassword());
+            log.info(loginDTO.getEmail(),loginDTO.getPassword());
+            return authenticationManager.authenticate(authenticationToken);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        try {
-            JSONObject jsonObject= new JSONObject(String.valueOf(stringBuffer));
-            String username=jsonObject.getString("email");
-            String password=jsonObject.getString("password");
-            log.info("Username is: {}",username); log.info("Password is: {}",password);
-            UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(username,password);
-            return authenticationManager.authenticate(authenticationToken);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
 
     }
 
