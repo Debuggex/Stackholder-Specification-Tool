@@ -133,6 +133,7 @@ public class UserService implements UserDetailsService {
         content = content.replace("[[URL]]", verifyURL);
 
         mimeMessageHelper.setText(content, true);
+
         mailSender.send(mimeMessage);
 
     }
