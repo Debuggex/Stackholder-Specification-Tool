@@ -24,6 +24,7 @@ import spring.framework.stackholder.RequestDTO.DeleteAccountDTO;
 import spring.framework.stackholder.RequestDTO.SignUpDTO;
 import spring.framework.stackholder.RequestDTO.UpdateDTO;
 import spring.framework.stackholder.RequestDTO.UpdatePasswordDTO;
+import spring.framework.stackholder.ResponseDTO.ForgotPasswordResponse;
 import spring.framework.stackholder.ResponseDTO.Response;
 import spring.framework.stackholder.ResponseDTO.UpdatePasswordResponse;
 import spring.framework.stackholder.StackHolderConstants.Constants;
@@ -181,15 +182,19 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
-    public String forgotPassword(String email) throws MessagingException, UnsupportedEncodingException {
+    public Response<ForgotPasswordResponse> forgotPassword(String email) throws MessagingException, UnsupportedEncodingException {
 
+        Response<ForgotPasswordResponse> response=new Response<>();
+        ForgotPasswordResponse forgotPasswordResponse=new ForgotPasswordResponse();
 
         String RandomCode= RandomString.make(4);
         Optional<User> userOptional=userRepository.findAll().stream().filter(
                 user1 -> user1.getEmail().equals(email)
         ).findFirst();
         if (userOptional.isEmpty()){
-            return "Your email does not match to our any of Records";
+            response.setResponseCode(Constants.EMAIL_NOT_FOUND);
+            response.setResponseMessage("Your email does not match to our any of Records");
+            return response;
         }
         User user=userOptional.get();
 
@@ -201,9 +206,9 @@ public class UserService implements UserDetailsService {
         String fullName=user.getFirstName()+" "+user.getLastName();
         String toEmail=user.getEmail();
         String fromEmail="sahbaanalam34@gmail.com";
-        String subject="StackHolder Account Email Verification";
+        String subject="Forgot Password Request";
         String content = "Dear [[name]],<br>"
-                + "We have received your Forgot Password Request. Below is your new current random generated password"
+                + "We have received your Forgot Password Request. Below is your new current random generated password. Use this password as your current password."
                 + "<h1>[[code]]</h1>"
                 + "Thank you,<br>"
                 + "Copyright © 2012 - 2022 StackHolder Specification, all rights reserved.";
@@ -222,7 +227,11 @@ public class UserService implements UserDetailsService {
         mimeMessageHelper.setText(content, true);
         mailSender.send(mimeMessage);
 
-        return "Forgot Password Request has been successfully to your email!";
+        forgotPasswordResponse.setEmail(email);
+        response.setResponseCode(1);
+        response.setResponseBody(forgotPasswordResponse);
+        response.setResponseMessage("Password has been sent successfully to "+email);
+        return response;
 
     }
 
@@ -231,7 +240,7 @@ public class UserService implements UserDetailsService {
         Response<UpdatePasswordResponse> response=new Response<>();
         Long id=Long.valueOf(updatePasswordDTO.getCurrentPassword().substring(4));
         User user=userRepository.findById(id).get();
-        user.setPassword(updatePasswordDTO.getNewPassword());
+        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
         userRepository.save(user);
         updatePasswordResponse.setNewPassword(user.getPassword());
         response.setResponseCode(1);

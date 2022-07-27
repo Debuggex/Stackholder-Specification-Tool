@@ -46,7 +46,7 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/user/login/**").permitAll();
         http.authorizeRequests().antMatchers("/user/verify/**").permitAll();
         http.authorizeRequests().antMatchers("/user/forgotpassword/**").permitAll();
-        http.authorizeRequests().antMatchers("/user/forgotpassword/**").permitAll();
+        http.authorizeRequests().antMatchers("/user/updateforgotpassword/**").permitAll();
 
         http.authorizeRequests().antMatchers("/v2/api-docs/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-resources/**").permitAll();

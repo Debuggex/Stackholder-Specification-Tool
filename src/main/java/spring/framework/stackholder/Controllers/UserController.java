@@ -4,6 +4,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import spring.framework.stackholder.RequestDTO.*;
+import spring.framework.stackholder.ResponseDTO.ForgotPasswordResponse;
 import spring.framework.stackholder.ResponseDTO.Response;
 import spring.framework.stackholder.ResponseDTO.UpdatePasswordResponse;
 import spring.framework.stackholder.Services.UserService;
@@ -54,7 +55,7 @@ public class UserController {
     }
 
     @PutMapping("/forgotpassword")
-    public String forgotPassword(@RequestBody @Validated ForgotPasswordDTO forgotPasswordDTO) throws MessagingException, UnsupportedEncodingException {
+    public Response<ForgotPasswordResponse> forgotPassword(@RequestBody @Validated ForgotPasswordDTO forgotPasswordDTO) throws MessagingException, UnsupportedEncodingException {
         return userService.forgotPassword(forgotPasswordDTO.getEmail());
     }
 
