@@ -54,17 +54,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-
         try {
-            LoginDTO loginDTO=new ObjectMapper().readValue(request.getInputStream(),LoginDTO.class);
-            UsernamePasswordAuthenticationToken authenticationToken=new UsernamePasswordAuthenticationToken(
-                    loginDTO.getEmail(),loginDTO.getPassword());
-            log.info(loginDTO.getEmail(),loginDTO.getPassword());
-            return authenticationManager.authenticate(authenticationToken);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            LoginDTO loginDTO = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    loginDTO.getEmail(), loginDTO.getPassword());
+            log.info(loginDTO.getEmail(), loginDTO.getPassword());
+            try {
+                return authenticationManager.authenticate(authenticationToken);
+            } catch (RuntimeException e) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Email Password Combination does not match!");
+                return null;
+            }
+        }catch (IOException e){
+            return null;
         }
+
 
     }
 
@@ -72,12 +76,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
         Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
-        String accessToken= JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000))
-                .withIssuer(request.getRequestURI())
+        String accessToken= JWT.create().withSubject(user.getUsername()).withIssuer(request.getRequestURI())
                 .sign(algorithm);
 
-        String refreshToken= JWT.create().withSubject(user.getUsername()).withExpiresAt(new Date(System.currentTimeMillis() +30*60*1000))
-                .withIssuer(request.getRequestURI())
+        String refreshToken= JWT.create().withSubject(user.getUsername()).withIssuer(request.getRequestURI())
                 .sign(algorithm);
 //        response.setHeader("accessToken",accessToken);
 //        response.setHeader("refreshToken",refreshToken);

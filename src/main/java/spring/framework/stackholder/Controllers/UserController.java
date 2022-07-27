@@ -39,11 +39,6 @@ public class UserController {
         return userService.get();
     }
 
-    @GetMapping("/verify")
-    public String verifyUser(@Param("code") String code){
-        return userService.verifyUser(code);
-    }
-
     @PutMapping("/update")
     public Response<User> update(@RequestBody @Validated UpdateDTO updateDTO){
         return userService.updateUser(updateDTO);
