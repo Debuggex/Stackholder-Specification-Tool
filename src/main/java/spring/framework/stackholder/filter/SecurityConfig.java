@@ -54,6 +54,7 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/swagger-ui/**").permitAll();
 
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/user/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/user/deleteaccount/**").hasAnyAuthority("ADMIN");
 

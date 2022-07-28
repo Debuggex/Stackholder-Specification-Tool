@@ -62,7 +62,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             try {
                 return authenticationManager.authenticate(authenticationToken);
             } catch (RuntimeException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Email Password Combination does not match!");
+                response.setContentType("text/plain");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Email Password Combination does not match!");
+                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Email Password Combination does not match!");
                 return null;
             }
         }catch (IOException e){

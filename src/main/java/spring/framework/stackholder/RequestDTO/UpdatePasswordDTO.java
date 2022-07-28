@@ -8,8 +8,7 @@ import org.springframework.lang.Nullable;
 @Setter
 public class UpdatePasswordDTO {
 
-    @Nullable
-    private Long id;
+    private String email;
 
     private String currentPassword;
 

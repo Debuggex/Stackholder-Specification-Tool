@@ -234,28 +234,32 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public Response<UpdatePasswordResponse> updateForgotPassword(UpdatePasswordDTO updatePasswordDTO){
-        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
-        Response<UpdatePasswordResponse> response=new Response<>();
-        User user=userRepository.findAll().stream().filter(
-                user1 -> user1.getPassword().equals(updatePasswordDTO.getCurrentPassword())
-        ).findFirst().get();
-        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
-        userRepository.save(user);
-        updatePasswordResponse.setNewPassword(user.getPassword());
-        response.setResponseCode(1);
-        response.setResponseMessage("Password has been changed successfully");
-        response.setResponseBody(updatePasswordResponse);
-        return response;
-    }
+//    public Response<UpdatePasswordResponse> updateForgotPassword(UpdatePasswordDTO updatePasswordDTO){
+//        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
+//        Response<UpdatePasswordResponse> response=new Response<>();
+//        User user=userRepository.findAll().stream().filter(
+//                user1 -> user1.getPassword().equals(updatePasswordDTO.getCurrentPassword())
+//        ).findFirst().get();
+//        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
+//        userRepository.save(user);
+//        updatePasswordResponse.setNewPassword(user.getPassword());
+//        response.setResponseCode(1);
+//        response.setResponseMessage("Password has been changed successfully");
+//        response.setResponseBody(updatePasswordResponse);
+//        return response;
+//    }
 
     public Response<UpdatePasswordResponse> updatePassword(UpdatePasswordDTO updatePasswordDTO){
-        String currentPassword=userRepository.findById(updatePasswordDTO.getId()).get().getPassword();
-        updatePasswordDTO.setCurrentPassword(passwordEncoder.encode(updatePasswordDTO.getCurrentPassword()));
+        User user=userRepository.findAll().stream().filter(
+                user1 -> user1.getEmail().equals(updatePasswordDTO.getEmail())
+        ).findFirst().get();
+        String currentPassword=user.getPassword();
+        if (updatePasswordDTO.getCurrentPassword().length()>5){
+            updatePasswordDTO.setCurrentPassword(passwordEncoder.encode(updatePasswordDTO.getCurrentPassword()));
+        }
         UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
         Response<UpdatePasswordResponse> response=new Response<>();
         if (currentPassword.equals(updatePasswordDTO.getCurrentPassword())){
-            User user=userRepository.findById(updatePasswordDTO.getId()).get();
             user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
             userRepository.save(user);
             updatePasswordResponse.setNewPassword(user.getPassword());
