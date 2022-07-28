@@ -55,8 +55,8 @@ public class UserController {
     }
 
     @PutMapping("/updateforgotpassword")
-    public Response<UpdatePasswordResponse> updateForgotPassword(@RequestBody @Validated UpdatePasswordDTO updatePasswordDTO){
-        return userService.updatePassword(updatePasswordDTO);
+    public Response<UpdatePasswordResponse> updateForgotPassword(@RequestBody @Validated UpdateForgotPasswordDTO updatePasswordDTO){
+        return userService.updateForgotPassword(updatePasswordDTO);
     }
 
     @DeleteMapping("/deleteaccount")

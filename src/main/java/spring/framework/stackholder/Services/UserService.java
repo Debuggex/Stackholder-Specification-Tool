@@ -17,13 +17,12 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.framework.stackholder.Repositories.UserRepository;
-import spring.framework.stackholder.RequestDTO.DeleteAccountDTO;
-import spring.framework.stackholder.RequestDTO.SignUpDTO;
-import spring.framework.stackholder.RequestDTO.UpdateDTO;
-import spring.framework.stackholder.RequestDTO.UpdatePasswordDTO;
+import spring.framework.stackholder.RequestDTO.*;
 import spring.framework.stackholder.ResponseDTO.ForgotPasswordResponse;
 import spring.framework.stackholder.ResponseDTO.Response;
 import spring.framework.stackholder.ResponseDTO.UpdatePasswordResponse;
@@ -234,32 +233,27 @@ public class UserService implements UserDetailsService {
 
     }
 
-//    public Response<UpdatePasswordResponse> updateForgotPassword(UpdatePasswordDTO updatePasswordDTO){
-//        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
-//        Response<UpdatePasswordResponse> response=new Response<>();
-//        User user=userRepository.findAll().stream().filter(
-//                user1 -> user1.getPassword().equals(updatePasswordDTO.getCurrentPassword())
-//        ).findFirst().get();
-//        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
-//        userRepository.save(user);
-//        updatePasswordResponse.setNewPassword(user.getPassword());
-//        response.setResponseCode(1);
-//        response.setResponseMessage("Password has been changed successfully");
-//        response.setResponseBody(updatePasswordResponse);
-//        return response;
-//    }
-
-    public Response<UpdatePasswordResponse> updatePassword(UpdatePasswordDTO updatePasswordDTO){
+    public Response<UpdatePasswordResponse> updateForgotPassword(UpdateForgotPasswordDTO updatePasswordDTO){
+        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
+        Response<UpdatePasswordResponse> response=new Response<>();
         User user=userRepository.findAll().stream().filter(
                 user1 -> user1.getEmail().equals(updatePasswordDTO.getEmail())
         ).findFirst().get();
-        String currentPassword=user.getPassword();
-        if (updatePasswordDTO.getCurrentPassword().length()>5){
-            updatePasswordDTO.setCurrentPassword(passwordEncoder.encode(updatePasswordDTO.getCurrentPassword()));
-        }
+        user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
+        userRepository.save(user);
+        updatePasswordResponse.setNewPassword(user.getPassword());
+        response.setResponseCode(1);
+        response.setResponseMessage("Password has been changed successfully");
+        response.setResponseBody(updatePasswordResponse);
+        return response;
+    }
+
+    public Response<UpdatePasswordResponse> updatePassword(UpdatePasswordDTO updatePasswordDTO){
+        User user=userRepository.findById(updatePasswordDTO.getId()).get();
+        boolean isSame= BCrypt.checkpw(updatePasswordDTO.getCurrentPassword(),user.getPassword());
         UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
         Response<UpdatePasswordResponse> response=new Response<>();
-        if (currentPassword.equals(updatePasswordDTO.getCurrentPassword())){
+        if (isSame){
             user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
             userRepository.save(user);
             updatePasswordResponse.setNewPassword(user.getPassword());
