@@ -9,5 +9,4 @@ public class DeleteAccountDTO {
 
     private Long id;
 
-    private String email;
 }

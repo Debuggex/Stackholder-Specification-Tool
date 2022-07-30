@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -62,7 +63,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             try {
                 return authenticationManager.authenticate(authenticationToken);
             } catch (RuntimeException e) {
-                response.setContentType("text/plain");
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("Email Password Combination does not match!");
                 //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Email Password Combination does not match!");

@@ -12,6 +12,8 @@ public interface Constants {
 
     Integer EMAIL_NOT_FOUND=6;
 
+    Integer INVALID_LOGIN_CREDENTIALS=7;
+
 
 
 
