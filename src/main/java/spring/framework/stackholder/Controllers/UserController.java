@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+@CrossOrigin
 @RequestMapping("/user")
 @RestController
 public class UserController {
