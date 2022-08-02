@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:5000")
 @RequestMapping("/user")
 @RestController
 public class UserController {

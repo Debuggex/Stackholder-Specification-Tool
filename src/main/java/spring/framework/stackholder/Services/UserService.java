@@ -100,7 +100,7 @@ public class UserService implements UserDetailsService {
 
         User savedUser=userRepository.save(user);
         Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
-        String accessToken= JWT.create().withSubject(user.getEmail()).withExpiresAt(new Date(System.currentTimeMillis() +10*60*1000)).sign(algorithm);
+        String accessToken= JWT.create().withSubject(user.getEmail()).sign(algorithm);
         sendVerificationEmail(user,accessToken,siteUrl);
         response.setResponseCode(1);
         response.setResponseMessage("User registered Successfully!");
