@@ -25,14 +25,16 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         //Cors Policies
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, HEAD");
-        response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-        response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials");
-        response.addHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "authorization, content-type, xsrf-token");
+        response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
         response.addIntHeader("Access-Control-Max-Age", 10);
 
         //Request Handling
+
+
         if (request.getServletPath().equals("/user/login")||request.getServletPath().equals("/user/signup")){
             filterChain.doFilter(request,response);
         }else {
@@ -61,7 +63,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 }
 
             }else {
-                filterChain.doFilter(request,response);
+
+                //Handling Pre-flight Requests
+                if ("OPTIONS".equals(request.getMethod())) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                }else {
+                    filterChain.doFilter(request, response);
+                }
             }
         }
     }
