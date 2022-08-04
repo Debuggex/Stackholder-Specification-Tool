@@ -100,6 +100,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             response1.setResponseBody(logInResponse);
         }else {
             logInResponse.setId(isUserActive.getId());
+            logInResponse.setEmail(isUserActive.getEmail());
             logInResponse.setUsername(isUserActive.getUsername());
             logInResponse.setFirstName(isUserActive.getFirstName());
             logInResponse.setLastName(isUserActive.getLastName());
