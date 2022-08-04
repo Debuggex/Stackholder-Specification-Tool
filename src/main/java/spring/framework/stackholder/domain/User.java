@@ -18,7 +18,7 @@ public class User {
     private Long id;
 
     @Column(name="Name", length = 100)
-    private String name;
+    private String username;
 
     @Column(name="FirstName", length = 40)
     private String firstName;

@@ -4,7 +4,7 @@ public interface Constants {
 
     Integer USERNAME_EXISTS=2;
 
-    Integer USER_EXISTS=3;
+    Integer EMAIL_EXISTS =3;
 
     Integer EMAIL_NOT_ACTIVE=4;
 

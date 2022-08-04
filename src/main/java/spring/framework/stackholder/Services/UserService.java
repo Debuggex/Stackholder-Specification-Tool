@@ -4,21 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import lombok.RequiredArgsConstructor;
 import net.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.framework.stackholder.Repositories.UserRepository;
@@ -35,7 +29,6 @@ import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -69,7 +62,7 @@ public class UserService implements UserDetailsService {
 
         userRepository.findAll().forEach(
                 user -> {
-                    if (user.getName().equals(signUpDTO.getName())) {
+                    if (user.getUsername().equals(signUpDTO.getUsername())) {
                         isUserNameExists.set(true);
                     }
                     if (user.getEmail().equals(signUpDTO.getEmail())) {
@@ -85,7 +78,7 @@ public class UserService implements UserDetailsService {
             response.setResponseBody(null);
             return response;
         }else if (isUserExists.get()){
-            response.setResponseCode(Constants.USER_EXISTS);
+            response.setResponseCode(Constants.EMAIL_EXISTS);
             response.setResponseMessage("User is already registered with this Email! Try a Different One");
             response.setResponseBody(null);
             return response;
@@ -96,7 +89,7 @@ public class UserService implements UserDetailsService {
         user.setFirstName(signUpDTO.getFirstName());
         user.setLastName(signUpDTO.getLastName());
         user.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
-        user.setName(signUpDTO.getName());
+        user.setUsername(signUpDTO.getUsername());
 
         User savedUser=userRepository.save(user);
         Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
@@ -109,7 +102,7 @@ public class UserService implements UserDetailsService {
     }
 
     private void sendVerificationEmail(User user, String token, String siteURL) throws MessagingException, UnsupportedEncodingException {
-        String userName= user.getName();
+        String userName= user.getUsername();
         String fullName=user.getFirstName()+" "+user.getLastName();
         String toEmail=user.getEmail();
         String fromEmail="sahbaanalam34@gmail.com";
@@ -172,7 +165,7 @@ public class UserService implements UserDetailsService {
         signUpDTO.setEmail(user.getEmail());
         signUpDTO.setFirstName(user.getFirstName());
         signUpDTO.setLastName(user.getLastName());
-        signUpDTO.setName(user.getName());
+        signUpDTO.setUsername(user.getUsername());
 
         userRepository.deleteById(deleteAccountDTO.getId());
         response.setResponseCode(1);
@@ -272,8 +265,26 @@ public class UserService implements UserDetailsService {
         Optional<User> isUserExists=userRepository.findById(Long.valueOf(updateDTO.getId()));
         Response<User> response=new Response<>();
         if (isUserExists.isPresent()){
+
+            if (userRepository.findAll().stream().anyMatch(
+                    user -> user.getUsername().equals(updateDTO.getUsername())
+            )){
+                response.setResponseCode(Constants.USERNAME_EXISTS);
+                response.setResponseMessage("Username already exists! Try a different one!");
+                response.setResponseBody(null);
+                return response;
+            }
+            if (userRepository.findAll().stream().anyMatch(
+                    user -> user.getEmail().equals(updateDTO.getEmail())
+            )){
+                response.setResponseCode(Constants.EMAIL_EXISTS);
+                response.setResponseMessage("Email already registered! Try a different one!");
+                response.setResponseBody(null);
+                return response;
+            }
+
             User user=isUserExists.get();
-            user.setName(updateDTO.getName());
+            user.setUsername(updateDTO.getUsername());
             user.setFirstName(updateDTO.getFirstName());
             user.setLastName(updateDTO.getLastName());
             user.setEmail(updateDTO.getEmail());
