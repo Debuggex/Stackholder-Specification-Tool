@@ -48,19 +48,30 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
+        LoginDTO loginDTO;
         try {
 
-            LoginDTO loginDTO = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
+            loginDTO = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     loginDTO.getEmail(), loginDTO.getPassword());
             log.info(loginDTO.getEmail(), loginDTO.getPassword());
+            spring.framework.stackholder.domain.User isUserActive= userRepository.findAll().stream().filter(
+                    user1 -> user1.getEmail().equals(loginDTO.getEmail())
+            ).findFirst().get();
+            if (!isUserActive.getIsActive()){
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Email is not Active!");
+                return null;
+            }
             try {
                 return authenticationManager.authenticate(authenticationToken);
             } catch (RuntimeException e) {
-                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("Email Password Combination does not match!");
-                //response.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Email Password Combination does not match!");
+                
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("Email Password Combination does not match!");
+
                 return null;
             }
         }catch (IOException e){
@@ -90,15 +101,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 user1 -> user1.getEmail().equals(username)
         ).findFirst().get();
         LogInResponse logInResponse=new LogInResponse();
-        Response<LogInResponse> response1=new Response<>();
-        if (!isUserActive.getIsActive()){
-            logInResponse.setId(null);
-            logInResponse.setAccessToken(null);
-            logInResponse.setRefreshToken(null);
-            response1.setResponseMessage("Email is not Active!");
-            response1.setResponseCode(Constants.EMAIL_NOT_ACTIVE);
-            response1.setResponseBody(logInResponse);
-        }else {
+
+         {
+            Response<LogInResponse> response1=new Response<>();
             logInResponse.setId(isUserActive.getId());
             logInResponse.setEmail(isUserActive.getEmail());
             logInResponse.setUsername(isUserActive.getUsername());
@@ -110,6 +115,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             response1.setResponseCode(1);
             response1.setResponseMessage("LogIn Successfully!");
             response1.setResponseBody(logInResponse);
+            response.setContentType("application/json");
+            new ObjectMapper().writeValue(response.getOutputStream(),response1);
         }
 
 
@@ -117,8 +124,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 //        tokens.put("accessToken",accessToken);
 //        tokens.put("refreshToken",refreshToken);
 
-        response.setContentType("application/json");
-        new ObjectMapper().writeValue(response.getOutputStream(),response1);
+
 
     }
 

@@ -266,22 +266,28 @@ public class UserService implements UserDetailsService {
         Response<User> response=new Response<>();
         if (isUserExists.isPresent()){
 
-            if (userRepository.findAll().stream().anyMatch(
-                    user -> user.getUsername().equals(updateDTO.getUsername())
+            if(userRepository.findAll().stream().anyMatch(
+                    user -> {
+                        if (user.getId().compareTo(Long.valueOf(updateDTO.getId()))!=0) {
+                            if (user.getUsername().equals(updateDTO.getUsername())){
+                                response.setResponseCode(Constants.EMAIL_EXISTS);
+                                response.setResponseMessage("Username already Exists!Try different one");
+                                response.setResponseBody(null);
+                                return true;
+                            }else if (user.getEmail().equals(updateDTO.getEmail())){
+                                response.setResponseCode(Constants.EMAIL_EXISTS);
+                                response.setResponseMessage("Email already registered! Try a different one!");
+                                response.setResponseBody(null);
+                                return true;
+                            }
+
+                        }
+                        return false;
+                    }
             )){
-                response.setResponseCode(Constants.USERNAME_EXISTS);
-                response.setResponseMessage("Username already exists! Try a different one!");
-                response.setResponseBody(null);
                 return response;
             }
-            if (userRepository.findAll().stream().anyMatch(
-                    user -> user.getEmail().equals(updateDTO.getEmail())
-            )){
-                response.setResponseCode(Constants.EMAIL_EXISTS);
-                response.setResponseMessage("Email already registered! Try a different one!");
-                response.setResponseBody(null);
-                return response;
-            }
+
 
             User user=isUserExists.get();
             user.setUsername(updateDTO.getUsername());
