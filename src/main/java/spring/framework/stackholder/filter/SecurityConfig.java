@@ -45,7 +45,7 @@ public class SecurityConfig {
         authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(encoder());
         http.csrf().disable();
 
-        http.logout().logoutUrl("/user/logout").invalidateHttpSession(true).deleteCookies("JSESSIONID");
+        http.logout().logoutUrl("/user/logout").invalidateHttpSession(true);
         http.apply(new CustomDSL(userRepository));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/user/signup/**").permitAll();
