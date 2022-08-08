@@ -81,7 +81,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 if (user1.isPresent()){
                     isUserActive=user1.get();
                     loginDTO.setEmail(user1.get().getEmail());
-                }else {
+                }else{
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write("Email does not exists in our records!");
