@@ -67,4 +67,13 @@ public class UserController {
 
     }
 
+    @PostMapping("/checkusername")
+    public Boolean checkUsername(@RequestBody @Validated CheckUsernameDTO checkUsernameDTO){
+        return userService.checkUser(checkUsernameDTO.getUsername());
+    }
+
+    @PostMapping("/checkemail")
+    public Boolean checkEmail(@RequestBody @Validated CheckEmailDTO checkEmailDTO){
+        return userService.checkEmail(checkEmailDTO.getEmail());
+    }
 }

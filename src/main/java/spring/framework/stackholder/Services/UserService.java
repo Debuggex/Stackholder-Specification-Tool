@@ -131,6 +131,22 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public boolean checkUser(String username){
+
+        return userRepository.findAll().stream().anyMatch(
+                user -> user.getUsername().equals(username)
+        );
+    }
+
+    public boolean checkEmail(String email){
+
+        return userRepository.findAll().stream().anyMatch(
+                user -> user.getEmail().equals(email)
+        );
+    }
+
+
+
     public String verifyUser(String code){
         Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
         JWTVerifier jwtVerifier= JWT.require(algorithm).build();
