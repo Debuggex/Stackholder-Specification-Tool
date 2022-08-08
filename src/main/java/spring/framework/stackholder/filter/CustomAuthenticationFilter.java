@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
@@ -52,18 +53,50 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         try {
 
             loginDTO = new ObjectMapper().readValue(request.getInputStream(), LoginDTO.class);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                    loginDTO.getEmail(), loginDTO.getPassword());
             log.info(loginDTO.getEmail(), loginDTO.getPassword());
-            spring.framework.stackholder.domain.User isUserActive= userRepository.findAll().stream().filter(
-                    user1 -> user1.getEmail().equals(loginDTO.getEmail())
-            ).findFirst().get();
+            spring.framework.stackholder.domain.User isUserActive;
+
+            //Splitting the email string to check if it is a email or username;
+            String []user=loginDTO.getEmail().split("@");
+            /*checking if username exists*/
+            if (user.length==1){
+                Optional<spring.framework.stackholder.domain.User> user1=userRepository.findAll().stream().filter(
+                        user2 -> user2.getUsername().equals(loginDTO.getEmail())
+                ).findFirst();
+
+                if (user1.isPresent()){
+                    isUserActive=user1.get();
+                    loginDTO.setEmail(user1.get().getEmail());
+                }else {
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("Username does not exists in our records!");
+                    return null;
+                }
+            }/*Checking if email exists*/else{
+                Optional<spring.framework.stackholder.domain.User> user1=userRepository.findAll().stream().filter(
+                        user2 -> user2.getEmail().equals(loginDTO.getEmail())
+                ).findFirst();
+
+                if (user1.isPresent()){
+                    isUserActive=user1.get();
+                    loginDTO.setEmail(user1.get().getEmail());
+                }else {
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("Email does not exists in our records!");
+                    return null;
+                }
+            }
+
             if (!isUserActive.getIsActive()){
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("Email is not Active!");
                 return null;
             }
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    loginDTO.getEmail(), loginDTO.getPassword());
             try {
                 return authenticationManager.authenticate(authenticationToken);
             } catch (RuntimeException e) {
