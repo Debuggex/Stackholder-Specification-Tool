@@ -74,12 +74,12 @@ public class UserService implements UserDetailsService {
 
         if (isUserNameExists.get()){
             response.setResponseCode(Constants.USERNAME_EXISTS);
-            response.setResponseMessage("User is already registered with this Username! Try a Different One");
+            response.setResponseMessage("User is already registered with this Username. Try a Different One");
             response.setResponseBody(null);
             return response;
         }else if (isUserExists.get()){
             response.setResponseCode(Constants.EMAIL_EXISTS);
-            response.setResponseMessage("User is already registered with this Email! Try a Different One");
+            response.setResponseMessage("User is already registered with this Email. Try a Different One");
             response.setResponseBody(null);
             return response;
         }
@@ -96,7 +96,7 @@ public class UserService implements UserDetailsService {
         String accessToken= JWT.create().withSubject(user.getEmail()).sign(algorithm);
         sendVerificationEmail(user,accessToken,siteUrl);
         response.setResponseCode(1);
-        response.setResponseMessage("User registered Successfully!");
+        response.setResponseMessage("User registered Successfully");
         response.setResponseBody(savedUser);
         return response;
     }
@@ -267,7 +267,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             updatePasswordResponse.setNewPassword(user.getPassword());
             response.setResponseCode(1);
-            response.setResponseMessage("Password Updated Succesfully!");
+            response.setResponseMessage("Password Updated Succesfully");
             response.setResponseBody(updatePasswordResponse);
             return response;
         }
@@ -287,12 +287,12 @@ public class UserService implements UserDetailsService {
                         if (user.getId().compareTo(Long.valueOf(updateDTO.getId()))!=0) {
                             if (user.getUsername().equals(updateDTO.getUsername())){
                                 response.setResponseCode(Constants.EMAIL_EXISTS);
-                                response.setResponseMessage("Username already Exists!Try different one");
+                                response.setResponseMessage("Username already Exists. Try different one");
                                 response.setResponseBody(null);
                                 return true;
                             }else if (user.getEmail().equals(updateDTO.getEmail())){
                                 response.setResponseCode(Constants.EMAIL_EXISTS);
-                                response.setResponseMessage("Email already registered! Try a different one!");
+                                response.setResponseMessage("Email already registered. Try a different one.");
                                 response.setResponseBody(null);
                                 return true;
                             }

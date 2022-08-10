@@ -70,7 +70,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 }else {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Username does not exists in our records!");
+                    response.getWriter().write("Username does not exists in our records");
                     return null;
                 }
             }/*Checking if email exists*/else{
@@ -84,7 +84,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 }else{
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Email does not exists in our records!");
+                    response.getWriter().write("Email does not exists in our records");
                     return null;
                 }
             }
@@ -92,7 +92,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             if (!isUserActive.getIsActive()){
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("Email is not Active!");
+                response.getWriter().write("Email is not Active");
                 return null;
             }
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
@@ -103,7 +103,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Email Password Combination does not match!");
+                    response.getWriter().write("Email/Username Password Combination does not match");
 
                 return null;
             }
@@ -146,7 +146,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             logInResponse.setRefreshToken(refreshToken);
 
             response1.setResponseCode(1);
-            response1.setResponseMessage("LogIn Successfully!");
+            response1.setResponseMessage("LogIn Successfully");
             response1.setResponseBody(logInResponse);
             response.setContentType("application/json");
             new ObjectMapper().writeValue(response.getOutputStream(),response1);
