@@ -45,9 +45,6 @@
             <version>2.4.1</version>
         </dependency>
 
-        <!--  Using libraries-bom to manage versions.
-See https://github.com/GoogleCloudPlatform/cloud-opensource-java/wiki/The-Google-Cloud-Platform-Libraries-BOM -->
-
 
         <dependency>
             <groupId>org.hibernate</groupId>
