@@ -206,7 +206,7 @@ public class UserService implements UserDetailsService {
         }
         User user=userOptional.get();
 
-        user.setPassword(RandomCode);
+        user.setPassword(passwordEncoder.encode(RandomCode));
         userRepository.save(user);
 
 
