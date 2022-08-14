@@ -35,4 +35,7 @@ public class User {
     @Column(name="Active", length = 100)
     private Boolean isActive=false;
 
+    @Column(name = "Admin")
+    private Boolean isAdmin=false;
+
 }

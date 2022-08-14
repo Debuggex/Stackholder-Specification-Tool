@@ -18,6 +18,8 @@ public class LogInResponse {
 
     private String lastName;
 
+    private Boolean isAdmin;
+
     private String accessToken;
 
     private String refreshToken;

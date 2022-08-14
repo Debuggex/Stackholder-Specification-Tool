@@ -14,6 +14,8 @@ public interface Constants {
 
     Integer INVALID_LOGIN_CREDENTIALS=7;
 
+    Integer ADMIN_ACCOUNT_DEL_FAILED=8;
+
 
 
 

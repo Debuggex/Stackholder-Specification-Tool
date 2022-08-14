@@ -142,6 +142,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             logInResponse.setUsername(isUserActive.getUsername());
             logInResponse.setFirstName(isUserActive.getFirstName());
             logInResponse.setLastName(isUserActive.getLastName());
+            logInResponse.setIsAdmin(isUserActive.getIsAdmin());
             logInResponse.setAccessToken(accessToken);
             logInResponse.setRefreshToken(refreshToken);
 
