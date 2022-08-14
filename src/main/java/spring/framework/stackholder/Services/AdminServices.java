@@ -111,16 +111,15 @@ public class AdminServices {
     public List<User> get(){
         List<User> users=new ArrayList<>();
 
-        userRepository.findAll().stream().filter(
-                users::add
-        );
-        users.forEach(
-                user -> {
-                    if (user.getIsAdmin()) {
-                        users.remove(user);
+        userRepository.findAll().forEach(
+                user ->
+                {
+                    if (!user.getIsAdmin()) {
+                        users.add(user);
                     }
                 }
         );
+
         return users;
     }
 
