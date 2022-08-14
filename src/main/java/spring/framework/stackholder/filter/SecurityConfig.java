@@ -56,6 +56,7 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/user/updateforgotpassword/**").permitAll();
         http.authorizeRequests().antMatchers("/user/checkusername/**").permitAll();
         http.authorizeRequests().antMatchers("/user/checkemail/**").permitAll();
+        http.authorizeRequests().antMatchers("/admin/get/**").permitAll();
 
 
 
@@ -68,6 +69,11 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/user/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/user/deleteaccount/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/admin/deleteaccount/**").hasAnyAuthority("ADMIN");
+
 
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
