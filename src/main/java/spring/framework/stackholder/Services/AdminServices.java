@@ -201,6 +201,10 @@ public class AdminServices {
             user.setFirstName(updateDTO.getFirstName());
             user.setLastName(updateDTO.getLastName());
             user.setEmail(updateDTO.getEmail());
+            user.setIsActive(updateDTO.getIsActive());
+            if (updateDTO.getPassword()!=null) {
+                user.setPassword(updateDTO.getPassword());
+            }
             userRepository.save(user);
             response.setResponseBody(user);
         }
