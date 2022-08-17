@@ -203,7 +203,7 @@ public class AdminServices {
             user.setEmail(updateDTO.getEmail());
             user.setIsActive(updateDTO.getIsActive());
             if (updateDTO.getPassword()!=null) {
-                user.setPassword(updateDTO.getPassword());
+                user.setPassword(passwordEncoder.encode(updateDTO.getPassword()));
             }
             userRepository.save(user);
             response.setResponseBody(user);
