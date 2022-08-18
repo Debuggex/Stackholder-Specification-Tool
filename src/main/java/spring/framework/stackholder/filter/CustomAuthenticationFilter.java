@@ -70,7 +70,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 }else {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Username does not exists in our records");
+                    response.getWriter().write("Username/password is invalid");
                     return null;
                 }
             }/*Checking if email exists*/else{
@@ -84,7 +84,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 }else{
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Email does not exists in our records");
+                    response.getWriter().write("Email/password is invalid");
                     return null;
                 }
             }
