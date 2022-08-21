@@ -92,7 +92,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             if (!isUserActive.getIsActive()){
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("UTF-8");
-                response.getWriter().write("Email is not Active");
+                response.getWriter().write("Email/User Name is not active");
                 return null;
             }
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
