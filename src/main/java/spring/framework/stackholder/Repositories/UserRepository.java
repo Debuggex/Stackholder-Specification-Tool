@@ -8,5 +8,4 @@ import spring.framework.stackholder.domain.User;
 public interface UserRepository extends JpaRepository<User,Long> {
 
 
-    public User findByPassword(String currentPassword);
 }
