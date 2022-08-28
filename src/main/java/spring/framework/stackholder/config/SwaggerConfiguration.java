@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class SwaggerConfiguration {
 
     @Bean
-    public Docket api(){
+    public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.any())
@@ -27,8 +27,8 @@ public class SwaggerConfiguration {
                 .apiInfo(metaData());
     }
 
-    private ApiInfo metaData(){
-        Contact contact=new Contact("Sahbaan Alam","sahbaanalam34@gmail.com","sahbaan.alam@avanzasolutions.com");
+    private ApiInfo metaData() {
+        Contact contact = new Contact("Sahbaan Alam", "sahbaanalam34@gmail.com", "sahbaan.alam@avanzasolutions.com");
         return new ApiInfo(
                 "StackHolder Specification Tool",
                 "This Project Includes API's for Stackholder Specification Tool",

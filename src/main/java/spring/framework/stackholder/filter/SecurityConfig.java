@@ -14,12 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import spring.framework.stackholder.Repositories.UserRepository;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -31,10 +26,9 @@ public class SecurityConfig {
 
 
     @Bean
-    public BCryptPasswordEncoder encoder(){
+    public BCryptPasswordEncoder encoder() {
         return new BCryptPasswordEncoder();
     }
-
 
 
     @Bean
@@ -49,7 +43,7 @@ public class SecurityConfig {
         http.apply(new CustomDSL(userRepository));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/user/signup/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/user/get/**").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/get/**").permitAll();
         http.authorizeRequests().antMatchers("/user/login/**").permitAll();
         http.authorizeRequests().antMatchers("/user/verify/**").permitAll();
         http.authorizeRequests().antMatchers("/user/forgotpassword/**").permitAll();
@@ -59,20 +53,19 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/admin/get/**").permitAll();
 
 
-
         http.authorizeRequests().antMatchers("/v2/api-docs/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-ui.html/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-ui/**").permitAll();
 
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/user/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/user/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/user/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/user/deleteaccount/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/admin/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT,"/admin/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/admin/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/admin/deleteaccount/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/user/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/user/deleteaccount/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/admin/deleteaccount/**").hasAnyAuthority("ADMIN");
 
 
         http.authorizeRequests().anyRequest().authenticated();
@@ -80,7 +73,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    public static class CustomDSL extends AbstractHttpConfigurer<CustomDSL,HttpSecurity>{
+    public static class CustomDSL extends AbstractHttpConfigurer<CustomDSL, HttpSecurity> {
 
         private final UserRepository userRepository;
 
@@ -91,8 +84,9 @@ public class SecurityConfig {
         @Override
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-            http.addFilter(new CustomAuthenticationFilter(authenticationManager,userRepository));
+            http.addFilter(new CustomAuthenticationFilter(authenticationManager, userRepository));
         }
+
         public CustomDSL customDsl() {
             return new CustomDSL(userRepository);
         }

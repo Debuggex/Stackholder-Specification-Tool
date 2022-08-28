@@ -18,7 +18,7 @@ public class ViewController {
     }
 
     @GetMapping("/verify")
-    public String verifyUser(@Param("code") String code){
+    public String verifyUser(@Param("code") String code) {
         return userService.verifyUser(code);
     }
 }

@@ -17,25 +17,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name="Name", length = 100)
+    @Column(name = "Name", length = 100)
     private String username;
 
-    @Column(name="FirstName", length = 40)
+    @Column(name = "FirstName", length = 40)
     private String firstName;
 
-    @Column(name="LastName", length = 40)
+    @Column(name = "LastName", length = 40)
     private String lastName;
 
-    @Column(name="Email", length = 100)
+    @Column(name = "Email", length = 100)
     private String email;
 
-    @Column(name="Password")
+    @Column(name = "Password")
     private String password;
 
-    @Column(name="Active", length = 100)
-    private Boolean isActive=false;
+    @Column(name = "Active", length = 100)
+    private Boolean isActive = false;
 
     @Column(name = "Admin")
-    private Boolean isAdmin=false;
+    private Boolean isAdmin = false;
 
 }

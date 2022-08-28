@@ -17,7 +17,6 @@ import spring.framework.stackholder.Repositories.UserRepository;
 import spring.framework.stackholder.RequestDTO.LoginDTO;
 import spring.framework.stackholder.ResponseDTO.LogInResponse;
 import spring.framework.stackholder.ResponseDTO.Response;
-import spring.framework.stackholder.StackHolderConstants.Constants;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -31,8 +30,6 @@ import java.util.Optional;
 
 @Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-
 
 
     private final AuthenticationManager authenticationManager;
@@ -57,31 +54,31 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             spring.framework.stackholder.domain.User isUserActive;
 
             //Splitting the email string to check if it is a email or username;
-            String []user=loginDTO.getEmail().split("@");
+            String[] user = loginDTO.getEmail().split("@");
             /*checking if username exists*/
-            if (user.length==1){
-                Optional<spring.framework.stackholder.domain.User> user1=userRepository.findAll().stream().filter(
+            if (user.length == 1) {
+                Optional<spring.framework.stackholder.domain.User> user1 = userRepository.findAll().stream().filter(
                         user2 -> user2.getUsername().equals(loginDTO.getEmail())
                 ).findFirst();
 
-                if (user1.isPresent()){
-                    isUserActive=user1.get();
+                if (user1.isPresent()) {
+                    isUserActive = user1.get();
                     loginDTO.setEmail(user1.get().getEmail());
-                }else {
+                } else {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write("Username/password is invalid");
                     return null;
                 }
-            }/*Checking if email exists*/else{
-                Optional<spring.framework.stackholder.domain.User> user1=userRepository.findAll().stream().filter(
+            }/*Checking if email exists*/ else {
+                Optional<spring.framework.stackholder.domain.User> user1 = userRepository.findAll().stream().filter(
                         user2 -> user2.getEmail().equals(loginDTO.getEmail())
                 ).findFirst();
 
-                if (user1.isPresent()){
-                    isUserActive=user1.get();
+                if (user1.isPresent()) {
+                    isUserActive = user1.get();
                     loginDTO.setEmail(user1.get().getEmail());
-                }else{
+                } else {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write("Email/password is invalid");
@@ -89,7 +86,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 }
             }
 
-            if (!isUserActive.getIsActive()){
+            if (!isUserActive.getIsActive()) {
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding("UTF-8");
                 response.getWriter().write("Email/User Name is not active");
@@ -100,14 +97,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             try {
                 return authenticationManager.authenticate(authenticationToken);
             } catch (RuntimeException e) {
-                
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    response.setCharacterEncoding("UTF-8");
-                    response.getWriter().write("Email/Username Password Combination does not match");
+
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("Email/Username Password Combination does not match");
 
                 return null;
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             return null;
         }
 
@@ -117,26 +114,26 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
-        Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
-        String accessToken= JWT.create().withSubject(user.getUsername()).withIssuer(request.getRequestURI())
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        String accessToken = JWT.create().withSubject(user.getUsername()).withIssuer(request.getRequestURI())
                 .sign(algorithm);
 
-        String refreshToken= JWT.create().withSubject(user.getUsername()).withIssuer(request.getRequestURI())
+        String refreshToken = JWT.create().withSubject(user.getUsername()).withIssuer(request.getRequestURI())
                 .sign(algorithm);
 //        response.setHeader("accessToken",accessToken);
 //        response.setHeader("refreshToken",refreshToken);
-        Map<String, String> tokens=new HashMap<>();
+        Map<String, String> tokens = new HashMap<>();
 
-        JWTVerifier jwtVerifier= JWT.require(algorithm).build();
-        DecodedJWT decodedJWT= jwtVerifier.verify(accessToken);
-        String username=decodedJWT.getSubject();
-        spring.framework.stackholder.domain.User isUserActive= userRepository.findAll().stream().filter(
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = jwtVerifier.verify(accessToken);
+        String username = decodedJWT.getSubject();
+        spring.framework.stackholder.domain.User isUserActive = userRepository.findAll().stream().filter(
                 user1 -> user1.getEmail().equals(username)
         ).findFirst().get();
-        LogInResponse logInResponse=new LogInResponse();
+        LogInResponse logInResponse = new LogInResponse();
 
-         {
-            Response<LogInResponse> response1=new Response<>();
+        {
+            Response<LogInResponse> response1 = new Response<>();
             logInResponse.setId(isUserActive.getId());
             logInResponse.setEmail(isUserActive.getEmail());
             logInResponse.setUsername(isUserActive.getUsername());
@@ -150,14 +147,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             response1.setResponseMessage("LogIn Successfully");
             response1.setResponseBody(logInResponse);
             response.setContentType("application/json");
-            new ObjectMapper().writeValue(response.getOutputStream(),response1);
+            new ObjectMapper().writeValue(response.getOutputStream(), response1);
         }
-
 
 
 //        tokens.put("accessToken",accessToken);
 //        tokens.put("refreshToken",refreshToken);
-
 
 
     }

@@ -1,6 +1,6 @@
 package spring.framework.stackholder.Controllers;
 
-import org.springframework.data.repository.query.Param;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import spring.framework.stackholder.RequestDTO.*;
@@ -26,27 +26,28 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Response<User> signUp(@RequestBody @Validated SignUpDTO signUpDTO, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
-        return userService.register(signUpDTO,getSiteURL(request));
+        return userService.register(signUpDTO, getSiteURL(request));
     }
 
-    private String getSiteURL(HttpServletRequest request) {
+    public String getSiteURL(HttpServletRequest request) {
         String siteURL = request.getRequestURL().toString();
         return siteURL.replace(request.getServletPath(), "");
     }
+
     @GetMapping("/get")
-    public List<User> get(){
+    public List<User> get() {
         return userService.get();
     }
 
     @PutMapping("/update")
-    public Response<User> update(@RequestBody @Validated UpdateDTO updateDTO){
+    public Response<User> update(@RequestBody @Validated UpdateDTO updateDTO) {
         return userService.updateUser(updateDTO);
     }
 
     @PutMapping("/updatepassword")
-    public Response<UpdatePasswordResponse> updatePassword(@RequestBody @Validated UpdatePasswordDTO updatePasswordDTO){
+    public Response<UpdatePasswordResponse> updatePassword(@RequestBody @Validated UpdatePasswordDTO updatePasswordDTO) {
         return userService.updatePassword(updatePasswordDTO);
     }
 
@@ -56,24 +57,24 @@ public class UserController {
     }
 
     @PutMapping("/updateforgotpassword")
-    public Response<UpdatePasswordResponse> updateForgotPassword(@RequestBody @Validated UpdateForgotPasswordDTO updatePasswordDTO){
+    public Response<UpdatePasswordResponse> updateForgotPassword(@RequestBody @Validated UpdateForgotPasswordDTO updatePasswordDTO) {
         return userService.updateForgotPassword(updatePasswordDTO);
     }
 
     @DeleteMapping("/deleteaccount")
-    public Response<SignUpDTO> deleteUser(@RequestBody @Validated DeleteAccountDTO deleteAccountDTO){
+    public Response<SignUpDTO> deleteUser(@RequestBody @Validated DeleteAccountDTO deleteAccountDTO) {
 
         return userService.deleteUser(deleteAccountDTO);
 
     }
 
     @PostMapping("/checkusername")
-    public Boolean checkUsername(@RequestBody @Validated CheckUsernameDTO checkUsernameDTO){
+    public Boolean checkUsername(@RequestBody @Validated CheckUsernameDTO checkUsernameDTO) {
         return userService.checkUser(checkUsernameDTO.getUsername());
     }
 
     @PostMapping("/checkemail")
-    public Boolean checkEmail(@RequestBody @Validated CheckEmailDTO checkEmailDTO){
+    public Boolean checkEmail(@RequestBody @Validated CheckEmailDTO checkEmailDTO) {
         return userService.checkEmail(checkEmailDTO.getEmail());
     }
 }

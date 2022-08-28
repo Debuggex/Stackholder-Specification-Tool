@@ -35,39 +35,39 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         //Request Handling
 
 
-        if (request.getServletPath().equals("/user/login")||request.getServletPath().equals("/user/signup")){
-            filterChain.doFilter(request,response);
-        }else {
-            String authorizationHeader=request.getHeader(HttpHeaders.AUTHORIZATION);
-            if (authorizationHeader!=null&&authorizationHeader.startsWith("Bearer ")){
-                try{
-                    String token=authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
-                    JWTVerifier jwtVerifier= JWT.require(algorithm).build();
-                    DecodedJWT decodedJWT= jwtVerifier.verify(token);
-                    String username=decodedJWT.getSubject();
-                    Collection<SimpleGrantedAuthority> authorities=new ArrayList<>();
+        if (request.getServletPath().equals("/user/login") || request.getServletPath().equals("/user/signup")) {
+            filterChain.doFilter(request, response);
+        } else {
+            String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                try {
+                    String token = authorizationHeader.substring("Bearer ".length());
+                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                    JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+                    DecodedJWT decodedJWT = jwtVerifier.verify(token);
+                    String username = decodedJWT.getSubject();
+                    Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
                     authorities.add(new SimpleGrantedAuthority("ADMIN"));
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(username,null,authorities);
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                    filterChain.doFilter(request,response);
-                }catch (Exception e){
-                    log.info("Error Logging in : {}",e.getMessage());
-                    response.setHeader("error",e.getMessage());
+                    filterChain.doFilter(request, response);
+                } catch (Exception e) {
+                    log.info("Error Logging in : {}", e.getMessage());
+                    response.setHeader("error", e.getMessage());
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     //response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    Map<String, String> error=new HashMap<>();
-                    error.put("error_message",e.getMessage());
+                    Map<String, String> error = new HashMap<>();
+                    error.put("error_message", e.getMessage());
                     response.setContentType("application/json");
-                    new ObjectMapper().writeValue(response.getOutputStream(),error);
+                    new ObjectMapper().writeValue(response.getOutputStream(), error);
                 }
 
-            }else {
+            } else {
 
                 //Handling Pre-flight Requests
                 if ("OPTIONS".equals(request.getMethod())) {
                     response.setStatus(HttpServletResponse.SC_OK);
-                }else {
+                } else {
                     filterChain.doFilter(request, response);
                 }
             }

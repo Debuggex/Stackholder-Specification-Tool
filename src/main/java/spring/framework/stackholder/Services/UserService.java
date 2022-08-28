@@ -43,8 +43,6 @@ public class UserService implements UserDetailsService {
     private final JavaMailSender mailSender;
 
 
-
-
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -54,10 +52,10 @@ public class UserService implements UserDetailsService {
     @Transactional
     public Response<User> register(SignUpDTO signUpDTO, String siteUrl) throws MessagingException, UnsupportedEncodingException {
 
-        Response<User> response=new Response<>();
+        Response<User> response = new Response<>();
 
-        AtomicReference<Boolean> isUserNameExists= new AtomicReference<>(false);
-        AtomicReference<Boolean> isUserExists= new AtomicReference<>(false);
+        AtomicReference<Boolean> isUserNameExists = new AtomicReference<>(false);
+        AtomicReference<Boolean> isUserExists = new AtomicReference<>(false);
 
         userRepository.findAll().forEach(
                 user -> {
@@ -71,29 +69,29 @@ public class UserService implements UserDetailsService {
                 }
         );
 
-        if (isUserNameExists.get()){
+        if (isUserNameExists.get()) {
             response.setResponseCode(Constants.USERNAME_EXISTS);
             response.setResponseMessage("User is already registered with this Username. Try a Different One");
             response.setResponseBody(null);
             return response;
-        }else if (isUserExists.get()){
+        } else if (isUserExists.get()) {
             response.setResponseCode(Constants.EMAIL_EXISTS);
             response.setResponseMessage("User is already registered with this Email. Try a Different One");
             response.setResponseBody(null);
             return response;
         }
 
-        User user=new User();
+        User user = new User();
         user.setEmail(signUpDTO.getEmail());
         user.setFirstName(signUpDTO.getFirstName());
         user.setLastName(signUpDTO.getLastName());
         user.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
         user.setUsername(signUpDTO.getUsername());
 
-        User savedUser=userRepository.save(user);
-        Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
-        String accessToken= JWT.create().withSubject(user.getEmail()).sign(algorithm);
-        sendVerificationEmail(user,accessToken,siteUrl);
+        User savedUser = userRepository.save(user);
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        String accessToken = JWT.create().withSubject(user.getEmail()).sign(algorithm);
+        sendVerificationEmail(user, accessToken, siteUrl);
         response.setResponseCode(1);
         response.setResponseMessage("User registered Successfully");
         response.setResponseBody(savedUser);
@@ -101,21 +99,21 @@ public class UserService implements UserDetailsService {
     }
 
     private void sendVerificationEmail(User user, String token, String siteURL) throws MessagingException, UnsupportedEncodingException {
-        String userName= user.getUsername();
-        String fullName=user.getFirstName()+" "+user.getLastName();
-        String toEmail=user.getEmail();
-        String fromEmail="sahbaanalam34@gmail.com";
-        String subject="StackHolder Account Email Verification";
+        String userName = user.getUsername();
+        String fullName = user.getFirstName() + " " + user.getLastName();
+        String toEmail = user.getEmail();
+        String fromEmail = "sahbaanalam34@gmail.com";
+        String subject = "StackHolder Account Email Verification";
         String content = "Dear [[name]],<br>"
                 + "Please click the link below to verify your registration:<br>"
                 + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
                 + "Thank you,<br>"
                 + "Copyright © 2012 - 2022 StackHolder Specification, all rights reserved.";
 
-        MimeMessage mimeMessage=mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper=new MimeMessageHelper(mimeMessage);
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
 
-        mimeMessageHelper.setFrom(fromEmail,"StackHolder Specification Tool");
+        mimeMessageHelper.setFrom(fromEmail, "StackHolder Specification Tool");
         mimeMessageHelper.setSubject(subject);
         mimeMessageHelper.setTo(toEmail);
 
@@ -130,14 +128,14 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public boolean checkUser(String username){
+    public boolean checkUser(String username) {
 
         return userRepository.findAll().stream().anyMatch(
                 user -> user.getUsername().equals(username)
         );
     }
 
-    public boolean checkEmail(String email){
+    public boolean checkEmail(String email) {
 
         return userRepository.findAll().stream().anyMatch(
                 user -> user.getEmail().equals(email)
@@ -145,14 +143,13 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public String verifyUser(String code) {
+        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        JWTVerifier jwtVerifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = jwtVerifier.verify(code);
+        String email = decodedJWT.getSubject();
 
-    public String verifyUser(String code){
-        Algorithm algorithm=Algorithm.HMAC256("secret".getBytes());
-        JWTVerifier jwtVerifier= JWT.require(algorithm).build();
-        DecodedJWT decodedJWT= jwtVerifier.verify(code);
-        String email=decodedJWT.getSubject();
-
-        User user=userRepository.findAll().stream().filter(
+        User user = userRepository.findAll().stream().filter(
                 user1 -> user1.getEmail().equals(email)
         ).findFirst().get();
 
@@ -163,8 +160,8 @@ public class UserService implements UserDetailsService {
         return "VerifyEmail";
     }
 
-    public List<User> get(){
-        List<User> users=new ArrayList<>();
+    public List<User> get() {
+        List<User> users = new ArrayList<>();
 
         userRepository.findAll().forEach(
                 users::add
@@ -172,17 +169,17 @@ public class UserService implements UserDetailsService {
         return users;
     }
 
-    public Response<SignUpDTO> deleteUser(DeleteAccountDTO deleteAccountDTO){
+    public Response<SignUpDTO> deleteUser(DeleteAccountDTO deleteAccountDTO) {
 
-        Response<SignUpDTO> response=new Response<>();
-        User user=userRepository.findById(deleteAccountDTO.getId()).get();
-        if (user.getIsAdmin()){
+        Response<SignUpDTO> response = new Response<>();
+        User user = userRepository.findById(deleteAccountDTO.getId()).get();
+        if (user.getIsAdmin()) {
             response.setResponseCode(Constants.ADMIN_ACCOUNT_DEL_FAILED);
             response.setResponseMessage("Account Deletion Failed. Please Contact Customer Support");
             response.setResponseBody(null);
             return response;
         }
-        SignUpDTO signUpDTO=new SignUpDTO();
+        SignUpDTO signUpDTO = new SignUpDTO();
         signUpDTO.setEmail(user.getEmail());
         signUpDTO.setFirstName(user.getFirstName());
         signUpDTO.setLastName(user.getLastName());
@@ -197,38 +194,38 @@ public class UserService implements UserDetailsService {
 
     public Response<ForgotPasswordResponse> forgotPassword(String email) throws MessagingException, UnsupportedEncodingException {
 
-        Response<ForgotPasswordResponse> response=new Response<>();
-        ForgotPasswordResponse forgotPasswordResponse=new ForgotPasswordResponse();
+        Response<ForgotPasswordResponse> response = new Response<>();
+        ForgotPasswordResponse forgotPasswordResponse = new ForgotPasswordResponse();
 
-        String RandomCode= RandomString.make(5);
-        Optional<User> userOptional=userRepository.findAll().stream().filter(
+        String RandomCode = RandomString.make(5);
+        Optional<User> userOptional = userRepository.findAll().stream().filter(
                 user1 -> user1.getEmail().equals(email)
         ).findFirst();
-        if (userOptional.isEmpty()){
+        if (userOptional.isEmpty()) {
             response.setResponseCode(Constants.EMAIL_NOT_FOUND);
             response.setResponseMessage("Your email does not match to our any of Records");
             return response;
         }
-        User user=userOptional.get();
+        User user = userOptional.get();
 
         user.setPassword(passwordEncoder.encode(RandomCode));
         userRepository.save(user);
 
 
-        String fullName=user.getFirstName()+" "+user.getLastName();
-        String toEmail=user.getEmail();
-        String fromEmail="sahbaanalam34@gmail.com";
-        String subject="Forgot Password Request";
+        String fullName = user.getFirstName() + " " + user.getLastName();
+        String toEmail = user.getEmail();
+        String fromEmail = "sahbaanalam34@gmail.com";
+        String subject = "Forgot Password Request";
         String content = "Dear [[name]],<br>"
                 + "We have received your Forgot Password Request. Below is your new current random generated password. Use this password as your current password."
                 + "<h1>[[code]]</h1>"
                 + "Thank you,<br>"
                 + "Copyright © 2012 - 2022 StackHolder Specification, all rights reserved.";
 
-        MimeMessage mimeMessage=mailSender.createMimeMessage();
-        MimeMessageHelper mimeMessageHelper=new MimeMessageHelper(mimeMessage);
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
 
-        mimeMessageHelper.setFrom(fromEmail,"StackHolder Specification Tool");
+        mimeMessageHelper.setFrom(fromEmail, "StackHolder Specification Tool");
         mimeMessageHelper.setSubject(subject);
         mimeMessageHelper.setTo(toEmail);
 
@@ -242,15 +239,15 @@ public class UserService implements UserDetailsService {
         forgotPasswordResponse.setEmail(email);
         response.setResponseCode(1);
         response.setResponseBody(forgotPasswordResponse);
-        response.setResponseMessage("Password has been sent successfully to "+email);
+        response.setResponseMessage("Password has been sent successfully to " + email);
         return response;
 
     }
 
-    public Response<UpdatePasswordResponse> updateForgotPassword(UpdateForgotPasswordDTO updatePasswordDTO){
-        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
-        Response<UpdatePasswordResponse> response=new Response<>();
-        User user=userRepository.findAll().stream().filter(
+    public Response<UpdatePasswordResponse> updateForgotPassword(UpdateForgotPasswordDTO updatePasswordDTO) {
+        UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse();
+        Response<UpdatePasswordResponse> response = new Response<>();
+        User user = userRepository.findAll().stream().filter(
                 user1 -> user1.getEmail().equals(updatePasswordDTO.getEmail())
         ).findFirst().get();
         user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
@@ -262,12 +259,12 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
-    public Response<UpdatePasswordResponse> updatePassword(UpdatePasswordDTO updatePasswordDTO){
-        User user=userRepository.findById(updatePasswordDTO.getId()).get();
-        boolean isSame= BCrypt.checkpw(updatePasswordDTO.getCurrentPassword(),user.getPassword());
-        UpdatePasswordResponse updatePasswordResponse=new UpdatePasswordResponse();
-        Response<UpdatePasswordResponse> response=new Response<>();
-        if (isSame){
+    public Response<UpdatePasswordResponse> updatePassword(UpdatePasswordDTO updatePasswordDTO) {
+        User user = userRepository.findById(updatePasswordDTO.getId()).get();
+        boolean isSame = BCrypt.checkpw(updatePasswordDTO.getCurrentPassword(), user.getPassword());
+        UpdatePasswordResponse updatePasswordResponse = new UpdatePasswordResponse();
+        Response<UpdatePasswordResponse> response = new Response<>();
+        if (isSame) {
             user.setPassword(passwordEncoder.encode(updatePasswordDTO.getNewPassword()));
             userRepository.save(user);
             updatePasswordResponse.setNewPassword(user.getPassword());
@@ -282,20 +279,20 @@ public class UserService implements UserDetailsService {
         return response;
     }
 
-    public Response<User> updateUser(UpdateDTO updateDTO){
-        Optional<User> isUserExists=userRepository.findById(Long.valueOf(updateDTO.getId()));
-        Response<User> response=new Response<>();
-        if (isUserExists.isPresent()){
+    public Response<User> updateUser(UpdateDTO updateDTO) {
+        Optional<User> isUserExists = userRepository.findById(Long.valueOf(updateDTO.getId()));
+        Response<User> response = new Response<>();
+        if (isUserExists.isPresent()) {
 
-            if(userRepository.findAll().stream().anyMatch(
+            if (userRepository.findAll().stream().anyMatch(
                     user -> {
-                        if (user.getId().compareTo(Long.valueOf(updateDTO.getId()))!=0) {
-                            if (user.getUsername().equals(updateDTO.getUsername())){
+                        if (user.getId().compareTo(Long.valueOf(updateDTO.getId())) != 0) {
+                            if (user.getUsername().equals(updateDTO.getUsername())) {
                                 response.setResponseCode(Constants.EMAIL_EXISTS);
                                 response.setResponseMessage("Username already Exists. Try different one");
                                 response.setResponseBody(null);
                                 return true;
-                            }else if (user.getEmail().equals(updateDTO.getEmail())){
+                            } else if (user.getEmail().equals(updateDTO.getEmail())) {
                                 response.setResponseCode(Constants.EMAIL_EXISTS);
                                 response.setResponseMessage("Email already registered. Try a different one.");
                                 response.setResponseBody(null);
@@ -305,12 +302,12 @@ public class UserService implements UserDetailsService {
                         }
                         return false;
                     }
-            )){
+            )) {
                 return response;
             }
 
 
-            User user=isUserExists.get();
+            User user = isUserExists.get();
             user.setUsername(updateDTO.getUsername());
             user.setFirstName(updateDTO.getFirstName());
             user.setLastName(updateDTO.getLastName());
@@ -325,17 +322,17 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> author=userRepository.findById(userRepository.findAll().stream().filter(
+        Optional<User> author = userRepository.findById(userRepository.findAll().stream().filter(
                 author1 -> author1.getEmail().equals(username)
         ).findFirst().get().getId());
 
-        if (author.isEmpty()){
+        if (author.isEmpty()) {
             throw new UsernameNotFoundException("Author with this name does not exist");
-        }else {
-            Collection<SimpleGrantedAuthority> authorities=new ArrayList<>();
+        } else {
+            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
             authorities.add(new SimpleGrantedAuthority("ADMIN"));
 
-            return new org.springframework.security.core.userdetails.User(author.get().getEmail(),author.get().getPassword(),authorities);
+            return new org.springframework.security.core.userdetails.User(author.get().getEmail(), author.get().getPassword(), authorities);
         }
     }
 }
