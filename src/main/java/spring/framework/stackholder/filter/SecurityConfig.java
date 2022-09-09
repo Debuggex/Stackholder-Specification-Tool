@@ -52,7 +52,6 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/user/checkemail/**").permitAll();
         http.authorizeRequests().antMatchers("/admin/get/**").permitAll();
 
-
         http.authorizeRequests().antMatchers("/v2/api-docs/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-ui.html/**").permitAll();
@@ -67,6 +66,13 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/admin/deleteaccount/**").hasAnyAuthority("ADMIN");
 
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/set/addSet/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/set/updateSet/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/set/deleteSet/**").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/stakeholder/addStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/admin/updateStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/admin/deleteStakeholder/**").hasAnyAuthority("ADMIN");
 
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
