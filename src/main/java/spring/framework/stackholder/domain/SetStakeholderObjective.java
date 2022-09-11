@@ -1,5 +1,6 @@
 package spring.framework.stackholder.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,14 +21,17 @@ public class SetStakeholderObjective {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "setId")
     private Set setId;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "setObjective")
     private SetObjective setObjective;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "setStakeholder")
     private SetStakeholder setStakeholder;

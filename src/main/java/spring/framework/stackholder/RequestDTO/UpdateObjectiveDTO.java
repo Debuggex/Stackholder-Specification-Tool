@@ -6,11 +6,11 @@ import org.springframework.lang.Nullable;
 
 @Getter
 @Setter
-public class UpdateStakeholderDTO {
+public class UpdateObjectiveDTO {
 
     private String setId;
 
-    private String stakeholderId;
+    private String objectiveId;
 
     private String name;
 

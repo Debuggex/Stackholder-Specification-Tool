@@ -6,8 +6,10 @@ import spring.framework.stackholder.Repositories.SetRespository;
 import spring.framework.stackholder.Repositories.SetStakeholderRepository;
 import spring.framework.stackholder.Repositories.StakeholderRepository;
 import spring.framework.stackholder.RequestDTO.DeleteStakeholderDTO;
+import spring.framework.stackholder.RequestDTO.GetStakeholdersDTO;
 import spring.framework.stackholder.RequestDTO.StakeholderDTO;
 import spring.framework.stackholder.RequestDTO.UpdateStakeholderDTO;
+import spring.framework.stackholder.ResponseDTO.GetStakeholderResponseDTO;
 import spring.framework.stackholder.ResponseDTO.Response;
 import spring.framework.stackholder.ResponseDTO.StakeholderResponseDTO;
 import spring.framework.stackholder.ServicesInterface.StakeholderInterface;
@@ -46,7 +48,7 @@ public class StakeholderService implements StakeholderInterface {
         SetStakeholder setStakeholder=new SetStakeholder();
 
         /**
-         * Checking if Stakeholder exists with input name
+         * @Checking if Stakeholder exists with input name
          */
         Set set = setRespository.findById(Long.valueOf(stakeholderDTO.getSetId())).get();
         boolean isStakeholder=set.getSetStakeholders().stream().anyMatch(
@@ -59,14 +61,14 @@ public class StakeholderService implements StakeholderInterface {
         }
 
         /**
-         * Saving Stakeholder to StakeholderTable
+         * @Saving Stakeholder to StakeholderTable
          */
         stakeholder.setName(stakeholderDTO.getName());
         stakeholder.setDescription(stakeholderDTO.getDescription());
         Stakeholder savedStakeholder=stakeholderRepository.save(stakeholder);
 
         /**
-         * Saving Stakeholder to @SetStakeholderTable
+         * @Saving Stakeholder to @SetStakeholderTable
          */
         setStakeholder.setName(stakeholderDTO.getName());
         setStakeholder.setDescription(stakeholderDTO.getDescription());
@@ -74,7 +76,7 @@ public class StakeholderService implements StakeholderInterface {
         set.addStakeholder(savedSetStakeholder);
 
         /**
-         * Setting up @Response
+         * @Setting up Response
          */
 
         StakeholderResponseDTO responseDTO=new StakeholderResponseDTO();
@@ -83,7 +85,7 @@ public class StakeholderService implements StakeholderInterface {
         responseDTO.setDescription(setStakeholder.getDescription());
 
         /**
-         * @Returning response
+         * @Returning Response
          */
 
         response.setResponseCode(1);
@@ -144,7 +146,7 @@ public class StakeholderService implements StakeholderInterface {
          */
 
         response.setResponseCode(1);
-        response.setResponseMessage("Stakeholder Added Successfully");
+        response.setResponseMessage("Stakeholder updated Successfully");
         response.setResponseBody(responseDTO);
         return response;
 
@@ -165,7 +167,7 @@ public class StakeholderService implements StakeholderInterface {
          * @Deleting Stakeholder from Stakeholder and SetStakeholder
          */
         setStakeholderRepository.deleteById(Long.valueOf(deleteStakeholderDTO.getStakeholderId()));
-        stakeholderRepository.deleteById(Long.valueOf(deleteStakeholderDTO.getStakeholderId()));
+        stakeholderRepository.deleteById(Long.parseLong(deleteStakeholderDTO.getStakeholderId())-1L);
 
         /**
          * @Setting up Response
@@ -181,8 +183,44 @@ public class StakeholderService implements StakeholderInterface {
          */
 
         response.setResponseCode(1);
-        response.setResponseMessage("Stakeholder Added Successfully");
+        response.setResponseMessage("Stakeholder Deleted Successfully");
         response.setResponseBody(responseDTO);
+        return response;
+    }
+
+    @Transactional
+    @Synchronized
+    @Override
+    public Response<GetStakeholderResponseDTO> getStakeholder(GetStakeholdersDTO getStakeholdersDTO) {
+
+        /**
+         * @Initilization
+         */
+        Response<GetStakeholderResponseDTO> response=new Response<>();
+        GetStakeholderResponseDTO getStakeholderResponseDTO = new GetStakeholderResponseDTO();
+
+        /**
+         * @Getting Stakeholders
+         */
+        Set set = setRespository.findById(Long.valueOf(getStakeholdersDTO.getSetId())).get();
+        for (int i = 0; i < set.getSetStakeholders().size(); i++) {
+            StakeholderResponseDTO stakeholderResponseDTO=new StakeholderResponseDTO();
+            stakeholderResponseDTO.setId(set.getSetStakeholders().get(i).getId());
+            stakeholderResponseDTO.setName(set.getSetStakeholders().get(i).getName());
+            stakeholderResponseDTO.setDescription(set.getSetStakeholders().get(i).getDescription());
+            getStakeholderResponseDTO.getStakeholderResponseDTOS().add(stakeholderResponseDTO);
+        }
+
+        /**
+         * @Settting up Response
+         */
+        response.setResponseCode(1);
+        response.setResponseMessage("Stakeholders have been fetched Successfully.");
+        response.setResponseBody(getStakeholderResponseDTO);
+
+        /**
+         * @Returning the Response
+         */
         return response;
     }
 

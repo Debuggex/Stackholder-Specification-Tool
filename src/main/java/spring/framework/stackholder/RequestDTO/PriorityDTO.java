@@ -2,18 +2,17 @@ package spring.framework.stackholder.RequestDTO;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 @Getter
 @Setter
-public class UpdateStakeholderDTO {
+public class PriorityDTO {
 
     private String setId;
 
     private String stakeholderId;
 
-    private String name;
+    private String objectiveId;
 
-    @Nullable
-    private String description;
+    private String priority;
+
 }

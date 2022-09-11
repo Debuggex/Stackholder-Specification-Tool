@@ -1,5 +1,6 @@
 package spring.framework.stackholder.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class SetObjective {
     @Column(name = "description" ,length = 500)
     private String description;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "setId")
     private Set setId;

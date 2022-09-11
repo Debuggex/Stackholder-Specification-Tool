@@ -20,5 +20,9 @@ public interface Constants {
 
     Integer STAKEHOLDER_NAME_EXISTS=8;
 
+    Integer OBJECTIVE_NAME_EXISTS=9;
+
+    Integer PRIORITY_EXISTS=10;
+
 
 }

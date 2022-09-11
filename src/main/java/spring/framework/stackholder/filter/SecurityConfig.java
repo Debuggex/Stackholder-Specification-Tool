@@ -69,10 +69,22 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/set/addSet/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.PUT, "/set/updateSet/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/set/deleteSet/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/set/getSets/**").hasAnyAuthority("ADMIN");
 
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/stakeholder/addStakeholder/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/admin/updateStakeholder/**").hasAnyAuthority("ADMIN");
-        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/admin/deleteStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/stakeholder/updateStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/stakeholder/deleteStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/stakeholder/getStakeholder/**").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/objective/addObjective/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/objective/updateObjective/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/objective/deleteObjective/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/objective/getObjectives/**").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/priority/getPriority/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/priority/deletePriority/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/priority/updatePriority/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.GET, "/priority/getPriority/**").hasAnyAuthority("ADMIN");
 
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -88,7 +100,7 @@ public class SecurityConfig {
         }
 
         @Override
-        public void configure(HttpSecurity http) throws Exception {
+        public void configure(HttpSecurity http) {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http.addFilter(new CustomAuthenticationFilter(authenticationManager, userRepository));
         }
