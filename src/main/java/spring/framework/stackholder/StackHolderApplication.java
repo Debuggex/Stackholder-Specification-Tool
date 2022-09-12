@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Properties;
 
-@SpringBootApplication(scanBasePackages = "spring.framework.stackholder")
+@SpringBootApplication
 public class StackHolderApplication {
 
     public static void main(String[] args) {
@@ -35,6 +35,7 @@ public class StackHolderApplication {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
 
         return mailSender1;
     }
