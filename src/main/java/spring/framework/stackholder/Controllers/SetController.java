@@ -57,7 +57,7 @@ public class SetController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/getSets", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/getSets", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<GetSetsResponseDTO>> getSets(@RequestBody @Validated GetSetsDTO getSetsDTO){
 
         return new ResponseEntity<>(setServices.getSets(getSetsDTO),HttpStatus.OK);
