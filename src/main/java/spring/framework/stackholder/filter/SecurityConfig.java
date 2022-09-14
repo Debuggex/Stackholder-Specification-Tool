@@ -52,7 +52,6 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers("/user/checkemail/**").permitAll();
         http.authorizeRequests().antMatchers("/admin/get/**").permitAll();
 
-
         http.authorizeRequests().antMatchers("/v2/api-docs/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-resources/**").permitAll();
         http.authorizeRequests().antMatchers("/swagger-ui.html/**").permitAll();
@@ -67,6 +66,21 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.POST, "/admin/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/admin/deleteaccount/**").hasAnyAuthority("ADMIN");
 
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/set/addSet/**","/set/getSets").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/set/updateSet/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/set/deleteSet/**").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/stakeholder/addStakeholder/**","/stakeholder/getStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/stakeholder/updateStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/stakeholder/deleteStakeholder/**").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/objective/addObjective/**","/objective/getObjectives/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/objective/updateObjective/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/objective/deleteObjective/**").hasAnyAuthority("ADMIN");
+
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/priority/getPriority/**","/priority/getPriority/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/priority/deletePriority/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.PUT, "/priority/updatePriority/**").hasAnyAuthority("ADMIN");
 
         http.authorizeRequests().anyRequest().authenticated();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -82,7 +96,7 @@ public class SecurityConfig {
         }
 
         @Override
-        public void configure(HttpSecurity http) throws Exception {
+        public void configure(HttpSecurity http) {
             AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
             http.addFilter(new CustomAuthenticationFilter(authenticationManager, userRepository));
         }

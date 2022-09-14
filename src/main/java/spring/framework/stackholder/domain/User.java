@@ -3,6 +3,8 @@ package spring.framework.stackholder.domain;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @EqualsAndHashCode
 @Getter
@@ -37,5 +39,15 @@ public class User {
 
     @Column(name = "Admin")
     private Boolean isAdmin = false;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "userId")
+    private List<Set> sets=new ArrayList<>();
+
+
+    public User addSet(Set set){
+        set.setUserId(this);
+        this.sets.add(set);
+        return this;
+    }
 
 }

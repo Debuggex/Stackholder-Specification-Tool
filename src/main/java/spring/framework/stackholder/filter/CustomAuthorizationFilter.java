@@ -24,7 +24,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        //Cors Policies
+        /**
+         * @Cors Policies
+         */
+
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Max-Age", "3600");
@@ -32,8 +35,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
         response.addHeader("Access-Control-Expose-Headers", "xsrf-token");
         response.addIntHeader("Access-Control-Max-Age", 10);
 
-        //Request Handling
-
+        /**
+         * @Request Handling
+         */
 
         if (request.getServletPath().equals("/user/login") || request.getServletPath().equals("/user/signup")) {
             filterChain.doFilter(request, response);
@@ -64,7 +68,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
             } else {
 
-                //Handling Pre-flight Requests
+                /**
+                 * @Handling Pre-flight Requests
+                 */
+
                 if ("OPTIONS".equals(request.getMethod())) {
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {

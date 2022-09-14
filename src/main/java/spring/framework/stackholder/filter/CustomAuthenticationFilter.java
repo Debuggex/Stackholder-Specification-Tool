@@ -70,7 +70,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     response.getWriter().write("Username/password is invalid");
                     return null;
                 }
-            }/*Checking if email exists*/ else {
+            }/** @Checking if email exists */ else {
                 Optional<spring.framework.stackholder.domain.User> user1 = userRepository.findAll().stream().filter(
                         user2 -> user2.getEmail().equals(loginDTO.getEmail())
                 ).findFirst();

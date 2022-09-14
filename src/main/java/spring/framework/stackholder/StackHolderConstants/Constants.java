@@ -16,5 +16,13 @@ public interface Constants {
 
     Integer ADMIN_ACCOUNT_DEL_FAILED = 8;
 
+    Integer SET_NAME_EXISTS=9;
+
+    Integer STAKEHOLDER_NAME_EXISTS=8;
+
+    Integer OBJECTIVE_NAME_EXISTS=9;
+
+    Integer PRIORITY_EXISTS=10;
+
 
 }
