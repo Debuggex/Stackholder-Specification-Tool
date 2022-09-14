@@ -49,7 +49,7 @@ public class PriorityController {
 
     }
 
-    @GetMapping(value = "/getPriority",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/getPriority",consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<GetPriorityResponse>> getPriority(@RequestBody @Validated GetPriorityDTO getPriorityDTO){
 
         return new ResponseEntity<>(priorityServices.getPriority(getPriorityDTO),HttpStatus.OK);

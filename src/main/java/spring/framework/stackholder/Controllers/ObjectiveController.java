@@ -53,7 +53,7 @@ public class ObjectiveController {
 
     }
 
-    @GetMapping(value = "/getObjectives", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/getObjectives", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Response<GetObjectivesResponseDTO>> getObjective(@RequestBody @Validated GetObjectivesDTO getObjectivesDTO){
 
         return new ResponseEntity<>(objectiveServices.getObjectives(getObjectivesDTO),HttpStatus.OK);
