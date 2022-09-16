@@ -54,7 +54,7 @@ public class StakeholderController {
     }
 
     @PostMapping(value = "/getStakeholder", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<GetStakeholderResponseDTO>> getStakeholders(GetStakeholdersDTO getStakeholdersDTO){
+    public ResponseEntity<Response<GetStakeholderResponseDTO>> getStakeholders(@RequestBody @Validated GetStakeholdersDTO getStakeholdersDTO){
 
         return new ResponseEntity<>(stakeholderService.getStakeholder(getStakeholdersDTO), HttpStatus.OK);
 
