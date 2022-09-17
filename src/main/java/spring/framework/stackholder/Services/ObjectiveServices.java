@@ -18,6 +18,7 @@ import spring.framework.stackholder.domain.Objective;
 import spring.framework.stackholder.domain.Set;
 import spring.framework.stackholder.domain.SetObjective;
 import javax.transaction.Transactional;
+import java.util.Objects;
 
 @Service
 public class ObjectiveServices implements ObjectiveInterface {
@@ -115,7 +116,7 @@ public class ObjectiveServices implements ObjectiveInterface {
          */
         Set set = setRespository.findById(Long.valueOf(updateObjectiveDTO.getSetId())).get();
         boolean isObjective=set.getSetObjectives().stream().anyMatch(
-                objective1 -> objective1.getName().equals(updateObjectiveDTO.getName())
+                objective1 -> objective1.getName().equals(updateObjectiveDTO.getName()) && !Objects.equals(objective1.getId(),updateObjectiveDTO.getObjectiveId())
         );
         if (isObjective){
             response.setResponseCode(Constants.OBJECTIVE_NAME_EXISTS);

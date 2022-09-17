@@ -18,6 +18,7 @@ import spring.framework.stackholder.domain.Set;
 import spring.framework.stackholder.domain.SetStakeholder;
 import spring.framework.stackholder.domain.Stakeholder;
 import javax.transaction.Transactional;
+import java.util.Objects;
 
 @Service
 public class StakeholderService implements StakeholderInterface {
@@ -110,7 +111,7 @@ public class StakeholderService implements StakeholderInterface {
          */
         Set set = setRespository.findById(Long.valueOf(updateStakeholderDTO.getSetId())).get();
         boolean isStakeholder=set.getSetStakeholders().stream().anyMatch(
-                stakeholder1 -> stakeholder1.getName().equals(updateStakeholderDTO.getName())
+                stakeholder1 -> stakeholder1.getName().equals(updateStakeholderDTO.getName()) && !Objects.equals(stakeholder1.getId(), Long.valueOf(updateStakeholderDTO.getStakeholderId()))
         );
         if (isStakeholder){
             response.setResponseCode(Constants.STAKEHOLDER_NAME_EXISTS);
