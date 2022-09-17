@@ -116,7 +116,7 @@ public class ObjectiveServices implements ObjectiveInterface {
          */
         Set set = setRespository.findById(Long.valueOf(updateObjectiveDTO.getSetId())).get();
         boolean isObjective=set.getSetObjectives().stream().anyMatch(
-                objective1 -> objective1.getName().equals(updateObjectiveDTO.getName()) && !Objects.equals(objective1.getId(),updateObjectiveDTO.getObjectiveId())
+                objective1 -> objective1.getName().equals(updateObjectiveDTO.getName()) && !Objects.equals(objective1.getId(),Long.valueOf(updateObjectiveDTO.getObjectiveId()))
         );
         if (isObjective){
             response.setResponseCode(Constants.OBJECTIVE_NAME_EXISTS);
