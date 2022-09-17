@@ -107,7 +107,7 @@ public class ObjectiveServices implements ObjectiveInterface {
 
         Response<ObjectiveResponseDTO> response = new Response<>();
         ObjectiveResponseDTO responseDTO=new ObjectiveResponseDTO();
-        Objective objective=objectiveRepository.findById(Long.valueOf(updateObjectiveDTO.getObjectiveId())).get();
+        Objective objective=objectiveRepository.findById(Long.parseLong(updateObjectiveDTO.getObjectiveId())-1L).get();
         SetObjective setObjective= setObjectiveRespository.findById(Long.valueOf(updateObjectiveDTO.getObjectiveId())).get();
 
         /**

@@ -102,7 +102,7 @@ public class StakeholderService implements StakeholderInterface {
          * @Initialization
          */
         Response<StakeholderResponseDTO> response=new Response<>();
-        Stakeholder stakeholder=stakeholderRepository.findById(Long.valueOf(updateStakeholderDTO.getStakeholderId())).get();
+        Stakeholder stakeholder=stakeholderRepository.findById(Long.parseLong(updateStakeholderDTO.getStakeholderId())-1L).get();
         SetStakeholder setStakeholder=setStakeholderRepository.findById(Long.valueOf(updateStakeholderDTO.getStakeholderId())).get();
 
         /**
