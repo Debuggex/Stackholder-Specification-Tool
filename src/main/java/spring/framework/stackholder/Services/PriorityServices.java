@@ -15,7 +15,9 @@ import spring.framework.stackholder.StackHolderConstants.Constants;
 import spring.framework.stackholder.domain.*;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class PriorityServices implements PriorityInterface {
@@ -171,24 +173,38 @@ public class PriorityServices implements PriorityInterface {
     @Transactional
     @Synchronized
     @Override
-    public Response<GetPriorityResponse> getPriority(GetPriorityDTO getPriorityDTO) {
+    public Response<List<GetPriorityResponse>> getPriority(GetPriorityDTO getPriorityDTO) {
 
         /**
          * @Initialization
          */
 
-        Response<GetPriorityResponse> response=new Response<>();
-        GetPriorityResponse getPriorityResponse=new GetPriorityResponse();
+        Response<List<GetPriorityResponse>> response=new Response<>();
+        List<GetPriorityResponse> getPriorityResponseList=new ArrayList<>();
 
         /**
          * @Getting Priority
          */
 
-        SetStakeholderObjective setStakeholderObjective=setStakeholderObjectiveRespository.findById(Long.valueOf(getPriorityDTO.getId())).get();
-        getPriorityResponse.setId(String.valueOf(setStakeholderObjective.getId()));
-        getPriorityResponse.setObjectiveName(setStakeholderObjective.getSetObjective().getName());
-        getPriorityResponse.setStakeholderName(setStakeholderObjective.getSetStakeholder().getName());
-        getPriorityResponse.setPriority(setStakeholderObjective.getPriority().name());
+        List<SetStakeholderObjective> setStakeholderObjective=new ArrayList<>();
+        setStakeholderObjectiveRespository.findAll().stream().forEach(
+                setStakeholderObjective1 -> {
+                    if (setStakeholderObjective1.getSetStakeholder().getId().equals(Long.valueOf(getPriorityDTO.getStakeholderId()))) {
+                        setStakeholderObjective.add(setStakeholderObjective1);
+                    }
+                }
+        );
+
+        for (int i = 0; i < setStakeholderObjective.size(); i++) {
+            GetPriorityResponse getPriorityResponse=new GetPriorityResponse();
+            getPriorityResponse.setId(String.valueOf(setStakeholderObjective.get(i).getId()));
+            getPriorityResponse.setObjectiveName(setStakeholderObjective.get(i).getSetObjective().getName());
+            getPriorityResponse.setStakeholderName(setStakeholderObjective.get(i).getSetStakeholder().getName());
+            getPriorityResponse.setPriority(setStakeholderObjective.get(i).getPriority().name());
+
+            getPriorityResponseList.add(getPriorityResponse);
+        }
+
 
         /**
          * @Setting up Response
@@ -196,7 +212,7 @@ public class PriorityServices implements PriorityInterface {
 
         response.setResponseCode(1);
         response.setResponseMessage("Priority has been fetched Successfully");
-        response.setResponseBody(getPriorityResponse);
+        response.setResponseBody(getPriorityResponseList);
 
         /**
          * @Returning Response

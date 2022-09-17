@@ -7,5 +7,6 @@ import lombok.Setter;
 @Setter
 public class GetPriorityDTO {
 
-    private String id;
+    private String stakeholderId;
+
 }
