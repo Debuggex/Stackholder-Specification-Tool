@@ -22,17 +22,17 @@ public class SetStakeholderObjective {
     private Long id;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "setId")
     private Set setId;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "setObjective")
     private SetObjective setObjective;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "setStakeholder")
     private SetStakeholder setStakeholder;
 

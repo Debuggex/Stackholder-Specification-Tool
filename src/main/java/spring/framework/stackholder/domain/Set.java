@@ -36,8 +36,8 @@ public class Set {
     @OneToMany(mappedBy = "setId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SetObjective> setObjectives=new ArrayList<>();
 
-    @OneToOne(mappedBy = "setId",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private SetStakeholderObjective setStakeholderObjective;
+    @OneToMany(mappedBy = "setId",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<SetStakeholderObjective> setStakeholderObjective=new ArrayList<>();
 
 
     public Set addStakeholder(SetStakeholder setStakeholder){
@@ -54,7 +54,7 @@ public class Set {
 
     public Set addPriority(SetStakeholderObjective setStakeholderObjective){
         setStakeholderObjective.setSetId(this);
-        this.setStakeholderObjective=setStakeholderObjective;
+        this.setStakeholderObjective.add(setStakeholderObjective);
         return this;
     }
 
