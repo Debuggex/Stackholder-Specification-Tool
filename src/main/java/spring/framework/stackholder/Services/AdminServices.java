@@ -4,6 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import spring.framework.stackholder.Repositories.ObjectiveRepository;
+import spring.framework.stackholder.Repositories.SetRespository;
 import spring.framework.stackholder.Repositories.StakeholderRepository;
 import spring.framework.stackholder.Repositories.UserRepository;
 import spring.framework.stackholder.RequestDTO.*;
@@ -34,13 +35,15 @@ public class AdminServices {
 
     private final ObjectiveRepository objectiveRepository;
 
+    private final SetRespository setRespository;
 
-    public AdminServices(UserRepository userRepository, PasswordEncoder passwordEncoder, StakeholderRepository stakeholderRepository, ObjectiveRepository objectiveRepository) {
+
+    public AdminServices(UserRepository userRepository, PasswordEncoder passwordEncoder, StakeholderRepository stakeholderRepository, ObjectiveRepository objectiveRepository, SetRespository setRespository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-
         this.stakeholderRepository = stakeholderRepository;
         this.objectiveRepository = objectiveRepository;
+        this.setRespository = setRespository;
     }
 
     @Transactional
@@ -394,6 +397,33 @@ public class AdminServices {
         response.setResponseMessage("Objective Deleted Successfully");
         response.setResponseBody(stakeholderResponseDTO);
         return response;
+    }
+
+    public Response<GetSetsResponseDTO> getSets(){
+
+        GetSetsResponseDTO getSetsResponseDTO=new GetSetsResponseDTO();
+        Response<GetSetsResponseDTO> response=new Response<>();
+
+        setRespository.findAll().forEach(
+                set -> {
+                    SetResponseDTO setResponseDTO=new SetResponseDTO();
+                    setResponseDTO.setId(set.getId());
+                    setResponseDTO.setName(set.getName());
+                    setResponseDTO.setDescription(set.getDescription());
+                    setResponseDTO.setUserId(String.valueOf(set.getUserId().getId()));
+                    setResponseDTO.setUserName(set.getUserId().getUsername());
+                    getSetsResponseDTO.getSetResponseDTOS().add(setResponseDTO);
+                }
+        );
+
+        response.setResponseCode(1);
+        response.setResponseBody(getSetsResponseDTO);
+        response.setResponseMessage("Sets Fetched Successfully");
+
+        return response;
+
+
+
     }
 
 }

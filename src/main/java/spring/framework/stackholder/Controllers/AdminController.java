@@ -94,4 +94,11 @@ public class AdminController {
         return new ResponseEntity<>(adminService.deleteStakeholderObjective(adminDeleteStakeholderObjectiveDTO),HttpStatus.OK);
 
     }
+
+    @GetMapping("/getSets")
+    public ResponseEntity<Response<GetSetsResponseDTO>> getSets(){
+
+        return new ResponseEntity<>(adminService.getSets(),HttpStatus.OK);
+
+    }
 }
