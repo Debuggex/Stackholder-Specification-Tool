@@ -2,9 +2,9 @@ package spring.framework.stackholder.Services;
 
 import lombok.Synchronized;
 import org.springframework.stereotype.Service;
-import spring.framework.stackholder.Repositories.ObjectiveRepository;
 import spring.framework.stackholder.Repositories.SetObjectiveRespository;
 import spring.framework.stackholder.Repositories.SetRespository;
+import spring.framework.stackholder.Repositories.SetStakeholderObjectiveRespository;
 import spring.framework.stackholder.RequestDTO.DeleteObjectiveDTO;
 import spring.framework.stackholder.RequestDTO.GetObjectivesDTO;
 import spring.framework.stackholder.RequestDTO.ObjectivesDTO;
@@ -17,7 +17,11 @@ import spring.framework.stackholder.StackHolderConstants.Constants;
 import spring.framework.stackholder.domain.Objective;
 import spring.framework.stackholder.domain.Set;
 import spring.framework.stackholder.domain.SetObjective;
+import spring.framework.stackholder.domain.SetStakeholderObjective;
+
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -25,13 +29,13 @@ public class ObjectiveServices implements ObjectiveInterface {
 
     private final SetRespository setRespository;
 
-    private final ObjectiveRepository objectiveRepository;
+    private final SetStakeholderObjectiveRespository setStakeholderObjectiveRespository;
 
     private final SetObjectiveRespository setObjectiveRespository;
 
-    public ObjectiveServices(SetRespository setRespository, ObjectiveRepository objectiveRepository, SetObjectiveRespository setObjectiveRespository) {
+    public ObjectiveServices(SetRespository setRespository, SetStakeholderObjectiveRespository setStakeholderObjectiveRespository, SetObjectiveRespository setObjectiveRespository) {
         this.setRespository = setRespository;
-        this.objectiveRepository = objectiveRepository;
+        this.setStakeholderObjectiveRespository = setStakeholderObjectiveRespository;
         this.setObjectiveRespository = setObjectiveRespository;
     }
 
@@ -62,13 +66,6 @@ public class ObjectiveServices implements ObjectiveInterface {
             return response;
         }
 
-
-        /**
-         * @Saving Objective to ObjectiveTable
-         */
-        objective.setName(objectivesDTO.getName());
-        objective.setDescription(objectivesDTO.getDescription());
-        Objective savedObjective=objectiveRepository.save(objective);
 
         /**
          * @Saving Objective to SetObjectiveTable
@@ -108,7 +105,6 @@ public class ObjectiveServices implements ObjectiveInterface {
 
         Response<ObjectiveResponseDTO> response = new Response<>();
         ObjectiveResponseDTO responseDTO=new ObjectiveResponseDTO();
-        Objective objective=objectiveRepository.findById(Long.parseLong(updateObjectiveDTO.getObjectiveId())-1L).get();
         SetObjective setObjective= setObjectiveRespository.findById(Long.valueOf(updateObjectiveDTO.getObjectiveId())).get();
 
         /**
@@ -123,13 +119,6 @@ public class ObjectiveServices implements ObjectiveInterface {
             response.setResponseMessage("Objective with this name is already Exists. Try a different one.");
             return response;
         }
-
-        /**
-         * @Updating Objective to ObjectiveTable
-         */
-        objective.setName(updateObjectiveDTO.getName());
-        objective.setDescription(updateObjectiveDTO.getDescription());
-        objectiveRepository.save(objective);
 
         /**
          * @Updating Objective to SetObjectiveTable
@@ -171,7 +160,26 @@ public class ObjectiveServices implements ObjectiveInterface {
          * @Deleting Stakeholder from Objective and SetObjective
          */
         setObjectiveRespository.deleteById(Long.valueOf(deleteObjectiveDTO.getObjectiveId()));
-        objectiveRepository.deleteById(Long.parseLong(deleteObjectiveDTO.getObjectiveId())-1L);
+
+        /**
+         * @Deleting Objective from SetStakeholderObjective(if Exists)
+         */
+
+        List<SetStakeholderObjective> setStakeholderObjectiveList = new ArrayList<>();
+        setStakeholderObjectiveRespository.findAll().stream().forEach(
+                setStakeholderObjective -> {
+                    if (setStakeholderObjective.getSetObjective().getId().equals(Long.valueOf(deleteObjectiveDTO.getObjectiveId()))) {
+
+                        setStakeholderObjectiveList.add(setStakeholderObjective);
+                    }
+                }
+        );
+
+        if (setStakeholderObjectiveList.size()!=0){
+            for (int i = 0; i < setStakeholderObjectiveList.size(); i++) {
+                setStakeholderObjectiveRespository.deleteById(setStakeholderObjectiveList.get(i).getId());
+            }
+        }
 
         /**
          * @Setting up Response
