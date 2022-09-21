@@ -1,10 +1,11 @@
 package spring.framework.stackholder.Controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import spring.framework.stackholder.RequestDTO.*;
-import spring.framework.stackholder.ResponseDTO.Response;
-import spring.framework.stackholder.ResponseDTO.UpdatePasswordResponse;
+import spring.framework.stackholder.ResponseDTO.*;
 import spring.framework.stackholder.Services.AdminServices;
 import spring.framework.stackholder.domain.User;
 
@@ -58,5 +59,39 @@ public class AdminController {
     @PostMapping("/checkemail")
     public Boolean checkEmail(@RequestBody @Validated CheckEmailDTO checkEmailDTO) {
         return adminService.checkEmail(checkEmailDTO.getEmail());
+    }
+
+    @GetMapping("/getObjectivesStakeholders")
+    public ResponseEntity<GetObjectivesStakeholdersResponseDTO> getObjectives(){
+        return new ResponseEntity<>(adminService.getObjectivesStakeholders(), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateStakeholderObjective")
+    public ResponseEntity<Response<StakeholderResponseDTO>> updateStakeholderObjective(@RequestBody @Validated AdminUpdateStakeholderObjectiveDTO adminUpdateStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response= adminService.updateStakeholderObjective(adminUpdateStakeholderObjectiveDTO);
+        if (response.getResponseBody() == null) {
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+    }
+
+    @PostMapping("/addStakeholderObjective")
+    public ResponseEntity<Response<StakeholderResponseDTO>> addStakeholderObjective(@RequestBody @Validated AdminAddStakeholderObjectiveDTO adminAddStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response= adminService.addStakeholderObjective(adminAddStakeholderObjectiveDTO);
+        if (response.getResponseBody() == null) {
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/deleteStakeholderObjective")
+    public ResponseEntity<Response<StakeholderResponseDTO>> deleteStakeholderObjective(@RequestBody @Validated AdminDeleteStakeholderObjectiveDTO adminDeleteStakeholderObjectiveDTO){
+
+        return new ResponseEntity<>(adminService.deleteStakeholderObjective(adminDeleteStakeholderObjectiveDTO),HttpStatus.OK);
+
     }
 }

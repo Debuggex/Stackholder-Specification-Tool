@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,12 +35,12 @@ public class SetStakeholder {
     @JoinColumn(name = "setId")
     private Set setId;
 
-    @OneToOne(mappedBy = "setStakeholder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private SetStakeholderObjective setStakeholderObjective;
+    @OneToMany(mappedBy = "setStakeholder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SetStakeholderObjective> setStakeholderObjective=new ArrayList<>();
 
     public SetStakeholder addPriority(SetStakeholderObjective setStakeholderObjective){
         setStakeholderObjective.setSetStakeholder(this);
-        this.setStakeholderObjective=setStakeholderObjective;
+        this.setStakeholderObjective.add(setStakeholderObjective);
         return this;
     }
 }

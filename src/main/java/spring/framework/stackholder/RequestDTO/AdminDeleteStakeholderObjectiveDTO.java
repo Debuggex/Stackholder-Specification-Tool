@@ -5,8 +5,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GetPriorityDTO {
+public class AdminDeleteStakeholderObjectiveDTO {
 
-    private String stakeholderId;
+    private String deleteType;
+
+    private String id;
+
 
 }

@@ -8,6 +8,8 @@ import spring.framework.stackholder.RequestDTO.UpdatePriorityDTO;
 import spring.framework.stackholder.ResponseDTO.PriorityResponseDTO;
 import spring.framework.stackholder.ResponseDTO.Response;
 
+import java.util.List;
+
 public interface PriorityInterface {
 
     Response<PriorityResponseDTO> addPriority(PriorityDTO priorityDTO);
@@ -16,6 +18,6 @@ public interface PriorityInterface {
 
     Response<PriorityResponseDTO> updatePriority(UpdatePriorityDTO updatePriorityDTO);
 
-    Response<GetPriorityResponse> getPriority(GetPriorityDTO getPriorityDTO);
+    Response<List<GetPriorityResponse>> getPriority(GetPriorityDTO getPriorityDTO);
 
 }

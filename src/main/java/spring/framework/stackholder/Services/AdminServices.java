@@ -3,14 +3,14 @@ package spring.framework.stackholder.Services;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import spring.framework.stackholder.Repositories.ObjectiveRepository;
+import spring.framework.stackholder.Repositories.StakeholderRepository;
 import spring.framework.stackholder.Repositories.UserRepository;
-import spring.framework.stackholder.RequestDTO.DeleteAccountDTO;
-import spring.framework.stackholder.RequestDTO.SignUpDTO;
-import spring.framework.stackholder.RequestDTO.UpdateDTO;
-import spring.framework.stackholder.RequestDTO.UpdatePasswordDTO;
-import spring.framework.stackholder.ResponseDTO.Response;
-import spring.framework.stackholder.ResponseDTO.UpdatePasswordResponse;
+import spring.framework.stackholder.RequestDTO.*;
+import spring.framework.stackholder.ResponseDTO.*;
 import spring.framework.stackholder.StackHolderConstants.Constants;
+import spring.framework.stackholder.domain.Objective;
+import spring.framework.stackholder.domain.Stakeholder;
 import spring.framework.stackholder.domain.User;
 
 import javax.mail.MessagingException;
@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -29,11 +30,17 @@ public class AdminServices {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final StakeholderRepository stakeholderRepository;
 
-    public AdminServices(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    private final ObjectiveRepository objectiveRepository;
+
+
+    public AdminServices(UserRepository userRepository, PasswordEncoder passwordEncoder, StakeholderRepository stakeholderRepository, ObjectiveRepository objectiveRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
 
+        this.stakeholderRepository = stakeholderRepository;
+        this.objectiveRepository = objectiveRepository;
     }
 
     @Transactional
@@ -201,4 +208,192 @@ public class AdminServices {
         response.setResponseMessage("User Details Updated Successfully");
         return response;
     }
+
+
+    public GetObjectivesStakeholdersResponseDTO getObjectivesStakeholders(){
+
+        GetObjectivesStakeholdersResponseDTO getObjectivesStakeholdersResponseDTO=new GetObjectivesStakeholdersResponseDTO();
+        GetObjectivesResponseDTO getObjectivesResponseDTO=new GetObjectivesResponseDTO();
+        GetStakeholderResponseDTO getStakeholderResponseDTO=new GetStakeholderResponseDTO();
+
+
+        objectiveRepository.findAll().forEach(
+                objective -> {
+                    ObjectiveResponseDTO objectiveResponseDTO=new ObjectiveResponseDTO();
+                    objectiveResponseDTO.setId(objective.getId());
+                    objectiveResponseDTO.setName(objective.getName());
+                    objectiveResponseDTO.setDescription(objective.getDescription());
+                    getObjectivesResponseDTO.getObjectiveResponseDTOS().add(objectiveResponseDTO);
+                }
+        );
+
+        stakeholderRepository.findAll().forEach(
+                stakeholder -> {
+                    StakeholderResponseDTO stakeholderResponseDTO=new StakeholderResponseDTO();
+                    stakeholderResponseDTO.setId(stakeholder.getId());
+                    stakeholderResponseDTO.setName(stakeholder.getName());
+                    stakeholderResponseDTO.setDescription(stakeholder.getDescription());
+                    getStakeholderResponseDTO.getStakeholderResponseDTOS().add(stakeholderResponseDTO);
+                }
+        );
+
+        getObjectivesStakeholdersResponseDTO.setGetObjectivesResponseDTO(getObjectivesResponseDTO);
+        getObjectivesStakeholdersResponseDTO.setGetStakeholderResponseDTO(getStakeholderResponseDTO);
+
+        return getObjectivesStakeholdersResponseDTO;
+
+    }
+
+    public Response<StakeholderResponseDTO> updateStakeholderObjective(AdminUpdateStakeholderObjectiveDTO adminUpdateStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response = new Response<>();
+        StakeholderResponseDTO stakeholderResponseDTO=new StakeholderResponseDTO();
+
+        if (adminUpdateStakeholderObjectiveDTO.getUpdateType().equals("Stakeholder")) {
+
+            boolean isStakeholder = stakeholderRepository.findAll().stream().anyMatch(
+                    stakeholder1 -> stakeholder1.getName().equals(adminUpdateStakeholderObjectiveDTO.getName()) && !Objects.equals(stakeholder1.getId(), Long.valueOf(adminUpdateStakeholderObjectiveDTO.getId()))
+
+            );
+            if (isStakeholder) {
+                response.setResponseCode(Constants.STAKEHOLDER_NAME_EXISTS);
+                response.setResponseMessage("Stakeholder with this name already Exists. Please Try Different One");
+                return response;
+            }
+
+            Stakeholder stakeholder = new Stakeholder();
+            stakeholder.setName(adminUpdateStakeholderObjectiveDTO.getName());
+            stakeholder.setDescription(adminUpdateStakeholderObjectiveDTO.getDescription());
+
+            Stakeholder saved=stakeholderRepository.save(stakeholder);
+
+            stakeholderResponseDTO.setId(saved.getId());
+            stakeholderResponseDTO.setName(saved.getName());
+            stakeholderResponseDTO.setDescription(saved.getDescription());
+
+            response.setResponseCode(1);
+            response.setResponseMessage("Stakeholder Added Successfully.");
+            response.setResponseBody(stakeholderResponseDTO);
+
+            return response;
+
+        }
+
+        boolean isObjective = objectiveRepository.findAll().stream().anyMatch(
+                objective1 -> objective1.getName().equals(adminUpdateStakeholderObjectiveDTO.getName()) && !Objects.equals(objective1.getId(),Long.valueOf(adminUpdateStakeholderObjectiveDTO.getId()))
+        );
+        if (isObjective) {
+            response.setResponseCode(Constants.STAKEHOLDER_NAME_EXISTS);
+            response.setResponseMessage("Objective with this name already Exists. Please Try Different One");
+            return response;
+        }
+
+        Objective objective = new Objective();
+        objective.setName(adminUpdateStakeholderObjectiveDTO.getName());
+        objective.setDescription(adminUpdateStakeholderObjectiveDTO.getDescription());
+
+        Objective saved=objectiveRepository.save(objective);
+
+        stakeholderResponseDTO.setId(saved.getId());
+        stakeholderResponseDTO.setName(saved.getName());
+        stakeholderResponseDTO.setDescription(saved.getDescription());
+
+        response.setResponseCode(1);
+        response.setResponseMessage("Objective Added Successfully.");
+        response.setResponseBody(stakeholderResponseDTO);
+
+        return response;
+
+    }
+
+    public Response<StakeholderResponseDTO> addStakeholderObjective(AdminAddStakeholderObjectiveDTO adminAddStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response = new Response<>();
+        StakeholderResponseDTO stakeholderResponseDTO=new StakeholderResponseDTO();
+
+        if (adminAddStakeholderObjectiveDTO.getAddType().equals("Stakeholder")) {
+
+            boolean isStakeholder = stakeholderRepository.findAll().stream().anyMatch(
+                    stakeholder -> stakeholder.getName().equals(adminAddStakeholderObjectiveDTO.getName())
+            );
+            if (isStakeholder) {
+                response.setResponseCode(Constants.STAKEHOLDER_NAME_EXISTS);
+                response.setResponseMessage("Stakeholder with this name already Exists. Please Try Different One");
+                return response;
+            }
+
+            Stakeholder stakeholder = new Stakeholder();
+            stakeholder.setName(adminAddStakeholderObjectiveDTO.getName());
+            stakeholder.setDescription(adminAddStakeholderObjectiveDTO.getDescription());
+
+            Stakeholder saved=stakeholderRepository.save(stakeholder);
+
+            stakeholderResponseDTO.setId(saved.getId());
+            stakeholderResponseDTO.setName(saved.getName());
+            stakeholderResponseDTO.setDescription(saved.getDescription());
+
+            response.setResponseCode(1);
+            response.setResponseMessage("Stakeholder Added Successfully.");
+            response.setResponseBody(stakeholderResponseDTO);
+
+            return response;
+        }
+
+        boolean isObjective = objectiveRepository.findAll().stream().anyMatch(
+                objective -> objective.getName().equals(adminAddStakeholderObjectiveDTO.getName())
+        );
+        if (isObjective) {
+            response.setResponseCode(Constants.STAKEHOLDER_NAME_EXISTS);
+            response.setResponseMessage("Objective with this name already Exists. Please Try Different One");
+            return response;
+        }
+
+        Objective objective = new Objective();
+        objective.setName(adminAddStakeholderObjectiveDTO.getName());
+        objective.setDescription(adminAddStakeholderObjectiveDTO.getDescription());
+
+        Objective saved=objectiveRepository.save(objective);
+
+        stakeholderResponseDTO.setId(saved.getId());
+        stakeholderResponseDTO.setName(saved.getName());
+        stakeholderResponseDTO.setDescription(saved.getDescription());
+
+        response.setResponseCode(1);
+        response.setResponseMessage("Objective Added Successfully.");
+        response.setResponseBody(stakeholderResponseDTO);
+
+        return response;
+
+    }
+
+    public Response<StakeholderResponseDTO> deleteStakeholderObjective(AdminDeleteStakeholderObjectiveDTO adminDeleteStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response = new Response<>();
+        StakeholderResponseDTO stakeholderResponseDTO=new StakeholderResponseDTO();
+
+        if (adminDeleteStakeholderObjectiveDTO.getDeleteType().equals("Stakeholder")) {
+            Stakeholder stakeholder = stakeholderRepository.findById(Long.valueOf(adminDeleteStakeholderObjectiveDTO.getId())).get();
+            stakeholderRepository.deleteById(Long.valueOf(adminDeleteStakeholderObjectiveDTO.getId()));
+            stakeholderResponseDTO.setId(stakeholder.getId());
+            stakeholderResponseDTO.setName(stakeholder.getName());
+            stakeholderResponseDTO.setDescription(stakeholder.getDescription());
+
+            response.setResponseCode(1);
+            response.setResponseMessage("Stakeholder Deleted Successfully");
+            response.setResponseBody(stakeholderResponseDTO);
+            return response;
+        }
+
+        Objective objective = objectiveRepository.findById(Long.valueOf(adminDeleteStakeholderObjectiveDTO.getId())).get();
+        objectiveRepository.deleteById(Long.valueOf(adminDeleteStakeholderObjectiveDTO.getId()));
+        stakeholderResponseDTO.setId(objective.getId());
+        stakeholderResponseDTO.setName(objective.getName());
+        stakeholderResponseDTO.setDescription(objective.getDescription());
+
+        response.setResponseCode(1);
+        response.setResponseMessage("Objective Deleted Successfully");
+        response.setResponseBody(stakeholderResponseDTO);
+        return response;
+    }
+
 }

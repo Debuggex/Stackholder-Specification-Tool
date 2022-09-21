@@ -14,6 +14,8 @@ import spring.framework.stackholder.ResponseDTO.PriorityResponseDTO;
 import spring.framework.stackholder.ResponseDTO.Response;
 import spring.framework.stackholder.Services.PriorityServices;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/priority")
 public class PriorityController {
@@ -50,7 +52,7 @@ public class PriorityController {
     }
 
     @PostMapping(value = "/getPriority",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response<GetPriorityResponse>> getPriority(@RequestBody @Validated GetPriorityDTO getPriorityDTO){
+    public ResponseEntity<Response<List<GetPriorityResponse>>> getPriority(@RequestBody @Validated GetPriorityDTO getPriorityDTO){
 
         return new ResponseEntity<>(priorityServices.getPriority(getPriorityDTO),HttpStatus.OK);
 

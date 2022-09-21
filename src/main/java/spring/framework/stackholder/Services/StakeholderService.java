@@ -3,6 +3,7 @@ package spring.framework.stackholder.Services;
 import lombok.Synchronized;
 import org.springframework.stereotype.Service;
 import spring.framework.stackholder.Repositories.SetRespository;
+import spring.framework.stackholder.Repositories.SetStakeholderObjectiveRespository;
 import spring.framework.stackholder.Repositories.SetStakeholderRepository;
 import spring.framework.stackholder.Repositories.StakeholderRepository;
 import spring.framework.stackholder.RequestDTO.DeleteStakeholderDTO;
@@ -16,8 +17,13 @@ import spring.framework.stackholder.ServicesInterface.StakeholderInterface;
 import spring.framework.stackholder.StackHolderConstants.Constants;
 import spring.framework.stackholder.domain.Set;
 import spring.framework.stackholder.domain.SetStakeholder;
+import spring.framework.stackholder.domain.SetStakeholderObjective;
 import spring.framework.stackholder.domain.Stakeholder;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class StakeholderService implements StakeholderInterface {
@@ -25,13 +31,13 @@ public class StakeholderService implements StakeholderInterface {
 
     private final SetStakeholderRepository setStakeholderRepository;
 
-    private final StakeholderRepository stakeholderRepository;
+    private final SetStakeholderObjectiveRespository setStakeholderObjectiveRespository;
 
     private final SetRespository setRespository;
 
-    public StakeholderService(SetStakeholderRepository setStakeholderRepository, StakeholderRepository stakeholderRepository, SetRespository setRespository) {
+    public StakeholderService(SetStakeholderRepository setStakeholderRepository, SetStakeholderObjectiveRespository setStakeholderObjectiveRespository, SetRespository setRespository) {
         this.setStakeholderRepository = setStakeholderRepository;
-        this.stakeholderRepository = stakeholderRepository;
+        this.setStakeholderObjectiveRespository = setStakeholderObjectiveRespository;
         this.setRespository = setRespository;
     }
 
@@ -60,12 +66,6 @@ public class StakeholderService implements StakeholderInterface {
             return response;
         }
 
-        /**
-         * @Saving Stakeholder to StakeholderTable
-         */
-        stakeholder.setName(stakeholderDTO.getName());
-        stakeholder.setDescription(stakeholderDTO.getDescription());
-        Stakeholder savedStakeholder=stakeholderRepository.save(stakeholder);
 
         /**
          * @Saving Stakeholder to @SetStakeholderTable
@@ -102,7 +102,6 @@ public class StakeholderService implements StakeholderInterface {
          * @Initialization
          */
         Response<StakeholderResponseDTO> response=new Response<>();
-        Stakeholder stakeholder=stakeholderRepository.findById(Long.valueOf(updateStakeholderDTO.getStakeholderId())).get();
         SetStakeholder setStakeholder=setStakeholderRepository.findById(Long.valueOf(updateStakeholderDTO.getStakeholderId())).get();
 
         /**
@@ -110,20 +109,13 @@ public class StakeholderService implements StakeholderInterface {
          */
         Set set = setRespository.findById(Long.valueOf(updateStakeholderDTO.getSetId())).get();
         boolean isStakeholder=set.getSetStakeholders().stream().anyMatch(
-                stakeholder1 -> stakeholder1.getName().equals(updateStakeholderDTO.getName())
+                stakeholder1 -> stakeholder1.getName().equals(updateStakeholderDTO.getName()) && !Objects.equals(stakeholder1.getId(), Long.valueOf(updateStakeholderDTO.getStakeholderId()))
         );
         if (isStakeholder){
             response.setResponseCode(Constants.STAKEHOLDER_NAME_EXISTS);
             response.setResponseMessage("Stakeholder with this name is already Exists. Try a different one.");
             return response;
         }
-
-        /**
-         * @Updating Stakeholder to StakeholderTable
-         */
-        stakeholder.setName(updateStakeholderDTO.getName());
-        stakeholder.setDescription(updateStakeholderDTO.getDescription());
-        stakeholderRepository.save(stakeholder);
 
         /**
          * @Updating Stakeholder to @SetStakeholderTable
@@ -164,10 +156,29 @@ public class StakeholderService implements StakeholderInterface {
         SetStakeholder setStakeholder=setStakeholderRepository.findById(Long.valueOf(deleteStakeholderDTO.getStakeholderId())).get();
 
         /**
-         * @Deleting Stakeholder from Stakeholder and SetStakeholder
+         * @Deleting Stakeholder from SetStakeholder
          */
         setStakeholderRepository.deleteById(Long.valueOf(deleteStakeholderDTO.getStakeholderId()));
-        stakeholderRepository.deleteById(Long.parseLong(deleteStakeholderDTO.getStakeholderId())-1L);
+
+        /**
+         * @Deleting Stakeholder from SetStakeholderObjective(if Exists)
+         */
+
+        List<SetStakeholderObjective> setStakeholderObjectiveList = new ArrayList<>();
+        setStakeholderObjectiveRespository.findAll().stream().forEach(
+                setStakeholderObjective -> {
+                    if (setStakeholderObjective.getSetStakeholder().getId().equals(Long.valueOf(deleteStakeholderDTO.getStakeholderId()))) {
+
+                        setStakeholderObjectiveList.add(setStakeholderObjective);
+                    }
+                }
+        );
+
+        if (setStakeholderObjectiveList.size()!=0){
+            for (int i = 0; i < setStakeholderObjectiveList.size(); i++) {
+                setStakeholderObjectiveRespository.deleteById(setStakeholderObjectiveList.get(i).getId());
+            }
+        }
 
         /**
          * @Setting up Response

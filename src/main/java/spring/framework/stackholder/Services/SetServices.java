@@ -52,7 +52,7 @@ public class SetServices implements SetInterface {
         if (isSetNameUnique) {
             response.setResponseBody(null);
             response.setResponseCode(Constants.SET_NAME_EXISTS);
-            response.setResponseMessage("The Set name must be unique");
+            response.setResponseMessage("Set is already exists with this name. Try a different one");
             return response;
         }
 
@@ -107,7 +107,7 @@ public class SetServices implements SetInterface {
          */
         response.setResponseBody(setResponseDTO);
         response.setResponseCode(1);
-        response.setResponseMessage("Set has been added Successfully");
+        response.setResponseMessage("Set has been deleted Successfully");
         return response;
     }
 
@@ -133,7 +133,7 @@ public class SetServices implements SetInterface {
         if (isSetNameUnique) {
             response.setResponseBody(null);
             response.setResponseCode(Constants.SET_NAME_EXISTS);
-            response.setResponseMessage("The Set name must be unique");
+            response.setResponseMessage("Set is already exists with this name. Try a different one.");
             return response;
         }
 

@@ -70,7 +70,7 @@ public class SecurityConfig {
         http.authorizeRequests().antMatchers(HttpMethod.PUT, "/set/updateSet/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/set/deleteSet/**").hasAnyAuthority("ADMIN");
 
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/stakeholder/addStakeholder/**","/stakeholder/getStakeholder/**").hasAnyAuthority("ADMIN");
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "/stakeholder/addStakeholder/**","/stakeholder/getStakeholders/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.PUT, "/stakeholder/updateStakeholder/**").hasAnyAuthority("ADMIN");
         http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/stakeholder/deleteStakeholder/**").hasAnyAuthority("ADMIN");
 
