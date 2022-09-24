@@ -264,18 +264,19 @@ public class AdminServices {
                 return response;
             }
 
-            Stakeholder stakeholder = new Stakeholder();
+            Stakeholder stakeholder = stakeholderRepository.findById(Long.valueOf(adminUpdateStakeholderObjectiveDTO.getId())).get();
             stakeholder.setName(adminUpdateStakeholderObjectiveDTO.getName());
             stakeholder.setDescription(adminUpdateStakeholderObjectiveDTO.getDescription());
+            stakeholder = stakeholderRepository.findById(Long.valueOf(adminUpdateStakeholderObjectiveDTO.getId())).get();
 
-            Stakeholder saved=stakeholderRepository.save(stakeholder);
+            stakeholderRepository.save(stakeholder);
 
-            stakeholderResponseDTO.setId(saved.getId());
-            stakeholderResponseDTO.setName(saved.getName());
-            stakeholderResponseDTO.setDescription(saved.getDescription());
+            stakeholderResponseDTO.setId(stakeholder.getId());
+            stakeholderResponseDTO.setName(stakeholder.getName());
+            stakeholderResponseDTO.setDescription(stakeholder.getDescription());
 
             response.setResponseCode(1);
-            response.setResponseMessage("Stakeholder Added Successfully.");
+            response.setResponseMessage("Stakeholder Updated Successfully.");
             response.setResponseBody(stakeholderResponseDTO);
 
             return response;
@@ -291,18 +292,19 @@ public class AdminServices {
             return response;
         }
 
-        Objective objective = new Objective();
+        Objective objective = objectiveRepository.findById(Long.valueOf(adminUpdateStakeholderObjectiveDTO.getId())).get();
         objective.setName(adminUpdateStakeholderObjectiveDTO.getName());
         objective.setDescription(adminUpdateStakeholderObjectiveDTO.getDescription());
 
-        Objective saved=objectiveRepository.save(objective);
+        objectiveRepository.save(objective);
+        objective = objectiveRepository.findById(Long.valueOf(adminUpdateStakeholderObjectiveDTO.getId())).get();
 
-        stakeholderResponseDTO.setId(saved.getId());
-        stakeholderResponseDTO.setName(saved.getName());
-        stakeholderResponseDTO.setDescription(saved.getDescription());
+        stakeholderResponseDTO.setId(objective.getId());
+        stakeholderResponseDTO.setName(objective.getName());
+        stakeholderResponseDTO.setDescription(objective.getDescription());
 
         response.setResponseCode(1);
-        response.setResponseMessage("Objective Added Successfully.");
+        response.setResponseMessage("Objective Updated Successfully.");
         response.setResponseBody(stakeholderResponseDTO);
 
         return response;
