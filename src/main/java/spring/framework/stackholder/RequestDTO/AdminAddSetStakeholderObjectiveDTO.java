@@ -4,20 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 
-@Setter
 @Getter
-public class AdminUpdateStakeholderObjectiveDTO {
+@Setter
 
-    private String updateType;
+public class AdminAddSetStakeholderObjectiveDTO {
 
-    private String id;
+
+    private String addType;
 
     private String name;
 
     @Nullable
     private String description;
 
-    @Nullable
     private String setId;
-
 }

@@ -3,13 +3,11 @@ package spring.framework.stackholder.Services;
 import lombok.Synchronized;
 import org.springframework.stereotype.Service;
 import spring.framework.stackholder.Repositories.*;
-import spring.framework.stackholder.RequestDTO.DeletePriorityDTO;
-import spring.framework.stackholder.RequestDTO.GetPriorityDTO;
+import spring.framework.stackholder.RequestDTO.*;
 import spring.framework.stackholder.ResponseDTO.GetPriorityResponse;
-import spring.framework.stackholder.RequestDTO.PriorityDTO;
-import spring.framework.stackholder.RequestDTO.UpdatePriorityDTO;
 import spring.framework.stackholder.ResponseDTO.PriorityResponseDTO;
 import spring.framework.stackholder.ResponseDTO.Response;
+import spring.framework.stackholder.ResponseDTO.SetStakeholderObjectiveVerificationResponse;
 import spring.framework.stackholder.ServicesInterface.PriorityInterface;
 import spring.framework.stackholder.StackHolderConstants.Constants;
 import spring.framework.stackholder.domain.*;
@@ -217,6 +215,47 @@ public class PriorityServices implements PriorityInterface {
         /**
          * @Returning Response
          */
+
+        return response;
+    }
+
+    @Override
+    public Response<SetStakeholderObjectiveVerificationResponse> verify(SetStakeholderObjectiveVerifyDTO setStakeholderObjectiveVerifyDTO) {
+
+        Response<SetStakeholderObjectiveVerificationResponse> response=new Response<>();
+        SetStakeholderObjectiveVerificationResponse setStakeholderObjectiveVerificationResponse = new SetStakeholderObjectiveVerificationResponse();
+        List<SetStakeholder> setStakeholderList = new ArrayList<>();
+        List<SetObjective> setObjectiveList = new ArrayList<>();
+        List<SetStakeholderObjective> setStakeholderObjectiveList = new ArrayList<>();
+
+
+        setStakeholderRepository.findAll().forEach(
+                setStakeholder -> {
+                    if (setStakeholder.getSetId().getId().equals(Long.valueOf(setStakeholderObjectiveVerifyDTO.getSetId()))) {
+                        setStakeholderList.add(setStakeholder);
+                    }
+                });
+        setObjectiveRespository.findAll().forEach(
+                setObjective -> {
+                    if (setObjective.getSetId().getId().equals(Long.valueOf(setStakeholderObjectiveVerifyDTO.getSetId()))) {
+                        setObjectiveList.add(setObjective);
+                    }
+                });
+
+        setStakeholderObjectiveRespository.findAll().forEach(
+                setStakeholderObjective -> {
+                    if (setStakeholderObjective.getSetId().getId().equals(Long.valueOf(setStakeholderObjectiveVerifyDTO.getSetId()))) {
+                        setStakeholderObjectiveList.add(setStakeholderObjective);
+                    }
+                });
+
+        int sizeNeed=setObjectiveList.size()*setStakeholderList.size();
+        int sizeHas=setStakeholderObjectiveList.size();
+        setStakeholderObjectiveVerificationResponse.setVerify(sizeNeed==sizeHas);
+
+        response.setResponseCode(1);
+        response.setResponseMessage("");
+        response.setResponseBody(setStakeholderObjectiveVerificationResponse);
 
         return response;
     }

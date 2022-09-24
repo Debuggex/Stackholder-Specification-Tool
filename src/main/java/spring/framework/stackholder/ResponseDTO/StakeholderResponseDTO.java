@@ -12,4 +12,8 @@ public class StakeholderResponseDTO {
     private String name;
 
     private String description;
+
+    private String setName;
+
+    private String setId;
 }

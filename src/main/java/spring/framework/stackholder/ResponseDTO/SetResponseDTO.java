@@ -12,4 +12,8 @@ public class SetResponseDTO {
     private String name;
 
     private String description;
+
+    private String userId;
+
+    private String userName;
 }

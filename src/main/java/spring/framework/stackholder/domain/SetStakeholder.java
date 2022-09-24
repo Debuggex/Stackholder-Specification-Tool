@@ -32,7 +32,7 @@ public class SetStakeholder {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "setId")
+    @JoinColumn(name = "setId", nullable = false, updatable = false)
     private Set setId;
 
     @OneToMany(mappedBy = "setStakeholder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

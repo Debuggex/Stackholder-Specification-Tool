@@ -1,12 +1,10 @@
 package spring.framework.stackholder.ServicesInterface;
 
-import spring.framework.stackholder.RequestDTO.DeletePriorityDTO;
-import spring.framework.stackholder.RequestDTO.GetPriorityDTO;
+import spring.framework.stackholder.RequestDTO.*;
 import spring.framework.stackholder.ResponseDTO.GetPriorityResponse;
-import spring.framework.stackholder.RequestDTO.PriorityDTO;
-import spring.framework.stackholder.RequestDTO.UpdatePriorityDTO;
 import spring.framework.stackholder.ResponseDTO.PriorityResponseDTO;
 import spring.framework.stackholder.ResponseDTO.Response;
+import spring.framework.stackholder.ResponseDTO.SetStakeholderObjectiveVerificationResponse;
 
 import java.util.List;
 
@@ -19,5 +17,7 @@ public interface PriorityInterface {
     Response<PriorityResponseDTO> updatePriority(UpdatePriorityDTO updatePriorityDTO);
 
     Response<List<GetPriorityResponse>> getPriority(GetPriorityDTO getPriorityDTO);
+
+    Response<SetStakeholderObjectiveVerificationResponse> verify(SetStakeholderObjectiveVerifyDTO setStakeholderObjectiveVerifyDTO);
 
 }
