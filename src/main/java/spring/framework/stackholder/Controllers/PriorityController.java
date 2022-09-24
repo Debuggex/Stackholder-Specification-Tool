@@ -5,15 +5,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import spring.framework.stackholder.RequestDTO.DeletePriorityDTO;
-import spring.framework.stackholder.RequestDTO.GetPriorityDTO;
-import spring.framework.stackholder.RequestDTO.PriorityDTO;
-import spring.framework.stackholder.RequestDTO.UpdatePriorityDTO;
+import spring.framework.stackholder.RequestDTO.*;
 import spring.framework.stackholder.ResponseDTO.GetPriorityResponse;
 import spring.framework.stackholder.ResponseDTO.PriorityResponseDTO;
 import spring.framework.stackholder.ResponseDTO.Response;
+import spring.framework.stackholder.ResponseDTO.SetStakeholderObjectiveVerificationResponse;
 import spring.framework.stackholder.Services.PriorityServices;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @RestController
@@ -49,6 +48,12 @@ public class PriorityController {
 
         return new ResponseEntity<>(priorityServices.updatePriority(updatePriorityDTO),HttpStatus.OK);
 
+    }
+
+    @PostMapping(value = "/verify", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response<SetStakeholderObjectiveVerificationResponse>> verify(@RequestBody @Validated SetStakeholderObjectiveVerifyDTO setStakeholderObjectiveVerifyDTO){
+
+        return new ResponseEntity<>(priorityServices.verify(setStakeholderObjectiveVerifyDTO),HttpStatus.OK);
     }
 
     @PostMapping(value = "/getPriority",consumes = MediaType.APPLICATION_JSON_VALUE)

@@ -101,4 +101,47 @@ public class AdminController {
         return new ResponseEntity<>(adminService.getSets(),HttpStatus.OK);
 
     }
+
+
+    @GetMapping("/getSetObjectivesStakeholders")
+    public ResponseEntity<GetObjectivesStakeholdersResponseDTO> getSetStakeholderObjectives(){
+        return new ResponseEntity<>(adminService.getSetObjectivesStakeholders(), HttpStatus.OK);
+    }
+
+    @PutMapping("/updateSetStakeholderObjective")
+    public ResponseEntity<Response<StakeholderResponseDTO>> updateSetStakeholderObjective(@RequestBody @Validated AdminUpdateStakeholderObjectiveDTO adminUpdateStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response= adminService.updateSetStakeholderObjective(adminUpdateStakeholderObjectiveDTO);
+        if (response.getResponseBody() == null) {
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+    }
+
+    @PostMapping("/addSetStakeholderObjective")
+    public ResponseEntity<Response<StakeholderResponseDTO>> addSetStakeholderObjective(@RequestBody @Validated AdminAddSetStakeholderObjectiveDTO adminAddStakeholderObjectiveDTO){
+
+        Response<StakeholderResponseDTO> response= adminService.addSetStakeholderObjective(adminAddStakeholderObjectiveDTO);
+        if (response.getResponseBody() == null) {
+            return new ResponseEntity<>(response,HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(response,HttpStatus.OK);
+
+    }
+
+    @DeleteMapping("/deleteSetStakeholderObjective")
+    public ResponseEntity<Response<StakeholderResponseDTO>> deleteSetStakeholderObjective(@RequestBody @Validated AdminDeleteStakeholderObjectiveDTO adminDeleteStakeholderObjectiveDTO){
+
+        return new ResponseEntity<>(adminService.deleteSetStakeholderObjective(adminDeleteStakeholderObjectiveDTO),HttpStatus.OK);
+
+    }
+
+    @GetMapping("/getPriority")
+    public ResponseEntity<Response<List<GetPriorityResponse>>> getPriority(){
+
+        return new ResponseEntity<>(adminService.getPriority(),HttpStatus.OK);
+
+    }
+
 }
