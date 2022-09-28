@@ -29,7 +29,7 @@ public class StackHolderApplication {
         mailSender1.setPort(587);
 
         mailSender1.setUsername("sahbaanalam34@gmail.com");
-        mailSender1.setPassword("niqvhrduoqyncmss");
+        mailSender1.setPassword("");
 
         Properties props = mailSender1.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
